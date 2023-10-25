@@ -1,8 +1,8 @@
-import 'package:catchmypain/view/center_management_page.dart';
-import 'package:catchmypain/view/home_page.dart';
-import 'package:catchmypain/view/membership_management_page.dart';
-import 'package:catchmypain/view/my_page.dart';
-import 'package:catchmypain/view/schedule_management_page.dart';
+import 'package:catchmypain/view/page/center_management_page.dart';
+import 'package:catchmypain/view/page/home_page.dart';
+import 'package:catchmypain/view/page/membership_management_page.dart';
+import 'package:catchmypain/view/page/my_page.dart';
+import 'package:catchmypain/view/page/schedule_management_page.dart';
 import 'package:flutter/material.dart';
 
 class MainPage extends StatefulWidget {

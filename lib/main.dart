@@ -1,5 +1,5 @@
-import 'package:catchmypain/view/login_page.dart';
-import 'package:catchmypain/view/main_page.dart';
+import 'package:catchmypain/view/page/login_page.dart';
+import 'package:catchmypain/view/page/main_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
