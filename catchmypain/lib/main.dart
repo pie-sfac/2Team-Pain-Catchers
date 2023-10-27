@@ -1,10 +1,13 @@
-import 'package:catchmypain/view/login_page.dart';
-import 'package:catchmypain/view/main_page.dart';
+import 'package:catchmypain/view/page/login_page.dart';
+import 'package:catchmypain/view/page/main_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 void main() {
-  runApp(const CatchMyPain());
+  runApp(const ProviderScope(
+    child: CatchMyPain(),
+  ));
 }
 
 final GoRouter _router = GoRouter(initialLocation: '/', routes: [
@@ -14,7 +17,7 @@ final GoRouter _router = GoRouter(initialLocation: '/', routes: [
   ),
   GoRoute(
     path: '/main',
-    builder: (context, state) => MainPage(),
+    builder: (context, state) => const MainPage(),
   ),
 ]);
 

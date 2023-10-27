@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class CenterManagementPage extends StatelessWidget {
-  const CenterManagementPage({super.key});
+class ChartPage extends StatelessWidget {
+  const ChartPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -9,7 +9,7 @@ class CenterManagementPage extends StatelessWidget {
       body: Center(
         child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [Text('It is CenterManagementPage')]),
+            children: [Text('It is ChartPage')]),
       ),
     );
   }

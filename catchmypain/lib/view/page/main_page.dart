@@ -1,8 +1,7 @@
-import 'package:catchmypain/view/center_management_page.dart';
-import 'package:catchmypain/view/home_page.dart';
-import 'package:catchmypain/view/membership_management_page.dart';
-import 'package:catchmypain/view/my_page.dart';
-import 'package:catchmypain/view/schedule_management_page.dart';
+import 'package:catchmypain/view/page/chart_page.dart';
+import 'package:catchmypain/view/page/drawing_page.dart';
+import 'package:catchmypain/view/page/exercise_camera_page.dart';
+import 'package:catchmypain/view/page/report_page.dart';
 import 'package:flutter/material.dart';
 
 class MainPage extends StatefulWidget {
@@ -20,12 +19,13 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     const List<BottomNavigationBarItem> navItems = [
-      BottomNavigationBarItem(icon: Icon(Icons.home), label: '홈'),
-      BottomNavigationBarItem(icon: Icon(Icons.calendar_today), label: '일정관리'),
-      BottomNavigationBarItem(icon: Icon(Icons.people_outline), label: '회원관리'),
-      BottomNavigationBarItem(icon: Icon(Icons.store_rounded), label: '센터관리'),
       BottomNavigationBarItem(
-          icon: Icon(Icons.person_outline_sharp), label: '마이페이지'),
+          icon: Icon(Icons.add_chart_outlined), label: '차트'),
+      BottomNavigationBarItem(icon: Icon(Icons.draw_outlined), label: '드로잉'),
+      BottomNavigationBarItem(
+          icon: Icon(Icons.note_alt_outlined), label: '퍼스널레포트'),
+      BottomNavigationBarItem(
+          icon: Icon(Icons.camera_alt_outlined), label: '카메라'),
     ];
 
     return Scaffold(
@@ -111,11 +111,10 @@ class _MainPageState extends State<MainPage> {
             });
           },
           children: const [
-            HomePage(),
-            ScheduleManagementPage(),
-            MembershipManagementPage(),
-            CenterManagementPage(),
-            MyPage(),
+            ChartPage(),
+            DrawingPage(),
+            ReportPage(),
+            ExerciseCameraPage(),
           ]),
       bottomNavigationBar: BottomNavigationBar(
         onTap: (value) {

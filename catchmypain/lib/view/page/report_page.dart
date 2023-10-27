@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class MembershipManagementPage extends StatelessWidget {
-  const MembershipManagementPage({super.key});
+class ReportPage extends StatelessWidget {
+  const ReportPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -9,7 +9,7 @@ class MembershipManagementPage extends StatelessWidget {
       body: Center(
         child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [Text('It is MembershipManagementPage')]),
+            children: [Text('It is ReportPage')]),
       ),
     );
   }
