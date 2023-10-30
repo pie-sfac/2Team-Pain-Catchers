@@ -128,7 +128,7 @@ class LoginPage extends StatelessWidget {
                       height: 40,
                       width: MediaQuery.sizeOf(context).width * 0.3,
                       child: ElevatedButton(
-                        onPressed: () => context.go('/main'),
+                        onPressed: () => context.push('/main'),
                         style: ElevatedButton.styleFrom(
                           backgroundColor:
                               Colors.grey.shade300, // Background color

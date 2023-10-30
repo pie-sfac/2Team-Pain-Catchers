@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class ExerciseCameraPage extends StatelessWidget {
   const ExerciseCameraPage({super.key});
@@ -11,9 +12,7 @@ class ExerciseCameraPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ElevatedButton(
-              onPressed: () {
-                print('Clicked');
-              },
+              onPressed: () => context.push('/camera'),
               child: const Text('It is ExerciseCameraPage'),
             ),
           ],

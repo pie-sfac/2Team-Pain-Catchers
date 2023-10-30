@@ -1,15 +1,15 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:catchmypain/model/push_up_model.dart';
 import 'package:catchmypain/painter/pose_painter.dart';
+import 'package:catchmypain/provider/push_up_provider.dart';
 import 'package:catchmypain/util/utils.dart' as utils;
 import 'package:camera/camera.dart';
 import 'package:catchmypain/model/exercisedata.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_ml_kit/google_ml_kit.dart';
-import 'package:google_mlkit_commons/google_mlkit_commons.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 
@@ -103,7 +103,6 @@ class _CameraViewState extends ConsumerState<CameraView> {
   }
 
   void printValue() {
-    final bloc = BlocProvider.of<PushUpCounter>(context);
     if (p1 != null &&
         p2 != null &&
         p3 != null &&
@@ -113,8 +112,8 @@ class _CameraViewState extends ConsumerState<CameraView> {
       final rtaAngle = utils.angle(p1!, p2!, p3!);
       final ltaAngle = utils.angle(p4!, p5!, p6!);
 
-      exerciseData.count = bloc.counter;
-      exerciseData.poseState = bloc.state.name;
+      exerciseData.count = ref.read(pushUpCounterProvider.notifier).counter;
+      exerciseData.poseState = ref.read(pushUpCounterProvider).name;
       exerciseData.angles.rightWES = rtaAngle;
       exerciseData.angles.leftWES = ltaAngle;
       print(
@@ -127,7 +126,6 @@ class _CameraViewState extends ConsumerState<CameraView> {
   void didUpdateWidget(covariant CameraView oldWidget) {
     if (widget.customPaint != oldWidget.customPaint) {
       if (widget.customPaint == null) return;
-      final bloc = BlocProvider.of<PushUpCounter>(context);
       for (final pose in widget.posePainter!.poses) {
         PoseLandmark getPoseLandmark(PoseLandmarkType type1) {
           final PoseLandmark joint1 = pose.landmarks[type1]!;
@@ -143,34 +141,40 @@ class _CameraViewState extends ConsumerState<CameraView> {
       }
 
       //verification
-      if (p1 != null &&
-          p2 != null &&
-          p3 != null &&
-          p4 != null &&
-          p5 != null &&
-          p6 != null) {
-        final rtaAngle = utils.angle(p1!, p2!, p3!);
-        final ltaAngle = utils.angle(p4!, p5!, p6!);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (p1 != null &&
+            p2 != null &&
+            p3 != null &&
+            p4 != null &&
+            p5 != null &&
+            p6 != null) {
+          final rtaAngle = utils.angle(p1!, p2!, p3!);
+          final ltaAngle = utils.angle(p4!, p5!, p6!);
 
-        final rta = utils.isPushUp(rtaAngle, bloc.state);
-        final lta = utils.isPushUp(ltaAngle, bloc.state);
+          final rta =
+              utils.isPushUp(rtaAngle, ref.watch(pushUpCounterProvider));
+          final lta =
+              utils.isPushUp(ltaAngle, ref.watch(pushUpCounterProvider));
 
-        // If both arms satisfy push-up conditions
-        if (rta != null && lta != null) {
-          if (rta == PushUpState.init && lta == PushUpState.init) {
-            bloc.setPushUpState(
-                rta); // Assuming rta and lta have the same state
-          } else if (rta == PushUpState.pushDown &&
-              lta == PushUpState.pushDown) {
-            bloc.setPushUpState(rta);
-          } else if (rta == PushUpState.complete &&
-              lta == PushUpState.complete) {
-            //_saveImage(currentCameraImage!.bytes);
-            bloc.increment();
-            bloc.setPushUpState(PushUpState.pushUp); // Reset to neutral state
+          // If both arms satisfy push-up conditions
+          if (rta != null && lta != null) {
+            if (rta == PushUpState.init && lta == PushUpState.init) {
+              ref.read(pushUpCounterProvider.notifier).setPushUpState(
+                  rta); // Assuming rta and lta have the same state
+            } else if (rta == PushUpState.pushDown &&
+                lta == PushUpState.pushDown) {
+              ref.read(pushUpCounterProvider.notifier).setPushUpState(rta);
+            } else if (rta == PushUpState.complete &&
+                lta == PushUpState.complete) {
+              //_saveImage(currentCameraImage!.bytes);
+              ref.read(pushUpCounterProvider.notifier).increment();
+              ref
+                  .read(pushUpCounterProvider.notifier)
+                  .setPushUpState(PushUpState.pushUp); // Reset to neutral state
+            }
           }
         }
-      }
+      });
     }
     super.didUpdateWidget(oldWidget);
   }
@@ -330,7 +334,6 @@ class _CameraViewState extends ConsumerState<CameraView> {
   }
 
   Widget _counterWidget() {
-    final bloc = BlocProvider.of<PushUpCounter>(context);
     return Positioned(
       left: 0,
       top: 50,
@@ -353,7 +356,7 @@ class _CameraViewState extends ConsumerState<CameraView> {
             borderRadius: const BorderRadius.all(Radius.circular(12)),
           ),
           child: Text(
-            '${bloc.counter}',
+            '${ref.read(pushUpCounterProvider.notifier).counter}',
             textAlign: TextAlign.center,
             style: const TextStyle(
               color: Colors.white,
@@ -375,8 +378,8 @@ class _CameraViewState extends ConsumerState<CameraView> {
           child: FloatingActionButton(
             heroTag: Object(),
             onPressed: () {
-              BlocProvider.of<PushUpCounter>(context).reset();
-              Navigator.of(context).pop();
+              ref.read(pushUpCounterProvider.notifier).reset();
+              context.pop();
             },
             backgroundColor: Colors.black54,
             child: const Icon(
@@ -593,15 +596,13 @@ class _CameraViewState extends ConsumerState<CameraView> {
   }
 
   void setCountDown() {
-    final bloc = BlocProvider.of<PushUpCounter>(context);
-
     const reduceSecondsBy = 1;
     setState(() {
       final seconds = myDuration.inSeconds - reduceSecondsBy;
       if (seconds < 0) {
         _countdownTimer!.cancel();
         _isCountDownTimerStart = false;
-        bloc.counter = 0;
+        ref.read(pushUpCounterProvider.notifier).counter = 0;
         _isRecordTimerStart = true;
         _handleRecordDuration();
       } else {
@@ -624,6 +625,8 @@ class _CameraViewState extends ConsumerState<CameraView> {
   }
 
   void _handleStopRecordBtn() async {
+    ref.read(pushUpCounterProvider.notifier).reset();
+
     _recordTimer?.cancel();
     _isRecordTimerStart = false;
   }

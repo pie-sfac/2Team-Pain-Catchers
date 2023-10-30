@@ -1,3 +1,4 @@
+import 'package:catchmypain/view/camera_view/pose_detector_view.dart';
 import 'package:catchmypain/view/page/login_page.dart';
 import 'package:catchmypain/view/page/main_page.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +19,10 @@ final GoRouter _router = GoRouter(initialLocation: '/', routes: [
   GoRoute(
     path: '/main',
     builder: (context, state) => const MainPage(),
+  ),
+  GoRoute(
+    path: '/camera',
+    builder: (context, state) => const PoseDetectorView(),
   ),
 ]);
 
