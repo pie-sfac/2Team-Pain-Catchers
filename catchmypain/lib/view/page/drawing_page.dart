@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class MyPage extends StatelessWidget {
-  const MyPage({super.key});
+class DrawingPage extends StatelessWidget {
+  const DrawingPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -9,7 +9,7 @@ class MyPage extends StatelessWidget {
       body: Center(
         child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [Text('It is MyPage')]),
+            children: [Text('It is DrawingPage')]),
       ),
     );
   }
