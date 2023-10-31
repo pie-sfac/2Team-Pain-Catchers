@@ -18,11 +18,14 @@ final GoRouter _router = GoRouter(initialLocation: '/', routes: [
   ),
   GoRoute(
     path: '/main',
-    builder: (context, state) => const MainPage(),
+    builder: (context, state) => MainPage(),
   ),
   GoRoute(
-    path: '/camera',
-    builder: (context, state) => const PoseDetectorView(),
+    path: '/camera/:exercise',
+    builder: (context, state) {
+      final exercise = state.pathParameters['exercise'];
+      return PoseDetectorView(exercise: exercise ?? '');
+    },
   ),
 ]);
 

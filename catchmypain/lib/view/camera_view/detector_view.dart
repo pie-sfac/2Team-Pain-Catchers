@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:camera/camera.dart';
 import 'package:catchmypain/painter/pose_painter.dart';
 import 'package:flutter/material.dart';
@@ -13,14 +14,15 @@ class DetectorView extends StatefulWidget {
     Key? key,
     required this.posePainter,
     required this.title,
-    required this.onImage,
     this.customPaint,
     this.text,
     this.initialDetectionMode = DetectorViewMode.liveFeed,
-    this.initialCameraLensDirection = CameraLensDirection.back,
+    required this.exercise,
+    required this.onImage,
     this.onCameraFeedReady,
     this.onDetectorViewModeChanged,
     this.onCameraLensDirectionChanged,
+    this.initialCameraLensDirection = CameraLensDirection.back,
   }) : super(key: key);
 
   final PosePainter? posePainter;
@@ -28,6 +30,7 @@ class DetectorView extends StatefulWidget {
   final CustomPaint? customPaint;
   final String? text;
   final DetectorViewMode initialDetectionMode;
+  final String exercise;
   final Function(InputImage inputImage) onImage;
   final Function()? onCameraFeedReady;
   final Function(DetectorViewMode mode)? onDetectorViewModeChanged;
@@ -53,6 +56,7 @@ class _DetectorViewState extends State<DetectorView> {
         ? CameraView(
             posePainter: widget.posePainter,
             customPaint: widget.customPaint,
+            exercise: widget.exercise,
             onImage: widget.onImage,
             onCameraFeedReady: widget.onCameraFeedReady,
             onDetectorViewModeChanged: _onDetectorViewModeChanged,

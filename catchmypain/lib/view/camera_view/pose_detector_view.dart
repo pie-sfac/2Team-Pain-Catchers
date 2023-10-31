@@ -7,8 +7,9 @@ import 'package:google_mlkit_pose_detection/google_mlkit_pose_detection.dart';
 import 'detector_view.dart';
 
 class PoseDetectorView extends StatefulWidget {
-  const PoseDetectorView({super.key});
+  const PoseDetectorView({super.key, required this.exercise});
 
+  final String exercise;
   @override
   State<StatefulWidget> createState() => _PoseDetectorViewState();
 }
@@ -34,6 +35,7 @@ class _PoseDetectorViewState extends State<PoseDetectorView> {
   Widget build(BuildContext context) {
     return DetectorView(
       title: 'Pose Detector',
+      exercise: widget.exercise,
       customPaint: _customPaint,
       text: _text,
       onImage: _processImage,

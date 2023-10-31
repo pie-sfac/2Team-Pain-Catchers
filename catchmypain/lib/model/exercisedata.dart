@@ -5,13 +5,13 @@ class ExerciseData {
   int count;
   String poseState;
   Angles angles;
-  String durationTime;
+  String recordTime;
 
   ExerciseData({
     required this.count,
     required this.poseState,
     required this.angles,
-    required this.durationTime,
+    required this.recordTime,
   });
 
   Map<String, dynamic> toMap() {
@@ -19,7 +19,7 @@ class ExerciseData {
       'count': count,
       'poseState': poseState,
       'angles': angles.toMap(),
-      'durationTime': durationTime,
+      'recordTime': recordTime,
     };
   }
 
@@ -28,7 +28,7 @@ class ExerciseData {
       count: map['count'] as int,
       poseState: map['poseState'] as String,
       angles: Angles.fromMap(map['angles'] as Map<String, dynamic>),
-      durationTime: map['durationTime'] as String,
+      recordTime: map['recordTime'] as String,
     );
   }
 
@@ -39,6 +39,7 @@ class ExerciseData {
 }
 
 class Angles {
+  String durationTime;
   double rightWES;
   double rightESH;
   double rightSHK;
@@ -56,6 +57,7 @@ class Angles {
     required this.leftESH,
     required this.leftSHK,
     required this.leftHKA,
+    required this.durationTime,
   });
 
   Map<String, dynamic> toMap() {
@@ -68,6 +70,7 @@ class Angles {
       'leftESH': leftESH,
       'leftSHK': leftSHK,
       'leftHKA': leftHKA,
+      'durationTime': durationTime,
     };
   }
 
@@ -81,6 +84,7 @@ class Angles {
       leftESH: map['leftESH'] as double,
       leftSHK: map['leftSHK'] as double,
       leftHKA: map['leftHKA'] as double,
+      durationTime: map['durationTime'] as String,
     );
   }
 
