@@ -10,13 +10,13 @@ class MainPage extends ConsumerWidget {
   MainPage({super.key});
 
   int bottomSelectedIndex = 0;
-  final PageController _pageController = PageController(
-    initialPage: 0,
-  );
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final int menuIndex = ref.watch(indexProvider) as int;
+    final PageController pageController = PageController(
+      initialPage: menuIndex,
+    );
     const List<BottomNavigationBarItem> navItems = [
       BottomNavigationBarItem(
           icon: Icon(Icons.add_chart_outlined), label: '차트'),
@@ -103,7 +103,7 @@ class MainPage extends ConsumerWidget {
         leadingWidth: 80,
       ),
       body: PageView(
-          controller: _pageController,
+          controller: pageController,
           onPageChanged: (i) => ref.read(indexProvider.notifier).value = i,
           children: const [
             ChartPage(),
@@ -114,7 +114,7 @@ class MainPage extends ConsumerWidget {
       bottomNavigationBar: BottomNavigationBar(
         onTap: (value) {
           ref.read(indexProvider.notifier).value = value;
-          _pageController.jumpToPage(value);
+          pageController.jumpToPage(value);
         },
         currentIndex: menuIndex,
         items: navItems,

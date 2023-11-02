@@ -40,13 +40,21 @@ class ExerciseData {
 
 class Angles {
   String durationTime;
+  //오른쪽 팔꿈치 각도
   double rightWES;
+  //오른쪽 겨드랑이 각도
   double rightESH;
+  //오른쪽 골반 각도
   double rightSHK;
+  //오른쪽 무릎 각도
   double rightHKA;
+  //왼쪽 팔꿈치 각도
   double leftWES;
+  //왼쪽 겨드랑이 각도
   double leftESH;
+  //왼쪽 골반 각도
   double leftSHK;
+  //왼쪽 무릎 각도
   double leftHKA;
   Angles({
     required this.rightWES,

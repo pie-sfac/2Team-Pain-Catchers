@@ -2,7 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:catchmypain/painter/pose_painter.dart';
-import 'package:catchmypain/provider/preferences_provider.dart';
+import 'package:catchmypain/provider/exercise_record_provider.dart';
+import 'package:catchmypain/provider/hive_box_provider.dart';
 import 'package:catchmypain/provider/push_up_provider.dart';
 import 'package:catchmypain/util/utils.dart' as utils;
 import 'package:camera/camera.dart';
@@ -12,6 +13,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_ml_kit/google_ml_kit.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 
@@ -68,7 +70,7 @@ class _CameraViewState extends ConsumerState<CameraView> {
   Timer? _countdownTimer;
   Timer? _recordTimer;
   List<ExerciseData> exerciseDataList = [];
-
+  late Box box;
   @override
   void initState() {
     super.initState();
@@ -77,6 +79,7 @@ class _CameraViewState extends ConsumerState<CameraView> {
   }
 
   void _initialize() async {
+    box = await Hive.openBox('myBox');
     if (_cameras.isEmpty) {
       _cameras = await availableCameras();
     }
@@ -117,10 +120,13 @@ class _CameraViewState extends ConsumerState<CameraView> {
       final elapsedTime = DateTime.now().difference(startTime);
       exerciseData.count = ref.read(pushUpCounterProvider.notifier).counter;
       exerciseData.poseState = ref.read(pushUpCounterProvider).name;
-      exerciseData.angles.rightWES = rtaAngle;
-      exerciseData.angles.leftWES = ltaAngle;
+      exerciseData.angles.rightWES = rtaAngle.roundToDouble();
+      exerciseData.angles.leftWES = ltaAngle.roundToDouble();
       exerciseData.angles.durationTime =
           (elapsedTime.inMilliseconds / 1000).toStringAsFixed(2);
+      String formattedDateTime =
+          "${startTime.year}-${startTime.month.toString().padLeft(2, '0')}-${startTime.day.toString().padLeft(2, '0')} ${startTime.hour.toString().padLeft(2, '0')}:${startTime.minute.toString().padLeft(2, '0')}:${startTime.second.toString().padLeft(2, '0')}";
+      exerciseData.recordTime = formattedDateTime;
       exerciseDataList.add(exerciseData);
       print('durationTime = ${exerciseData.angles.durationTime}  /&/&/&/& '
           'counter = ${exerciseData.count} /&/&/&/& poseState = ${exerciseData.poseState}  /&/&/&/& '
@@ -202,7 +208,7 @@ class _CameraViewState extends ConsumerState<CameraView> {
     _countdownTimer?.cancel();
     _timer?.cancel();
     _stopLiveFeed();
-    print('excerciseData Size : ${exerciseDataList.length}');
+    //box.clear();
     super.dispose();
   }
 
@@ -604,12 +610,6 @@ class _CameraViewState extends ConsumerState<CameraView> {
     widget.onImage(inputImage);
   }
 
-  void _handleStartRecordBtn() {
-    _isCountDownTimerStart = true;
-    _countdownTimer =
-        Timer.periodic(const Duration(seconds: 1), (_) => setCountDown());
-  }
-
   void setCountDown() {
     const reduceSecondsBy = 1;
     setState(() {
@@ -645,11 +645,21 @@ class _CameraViewState extends ConsumerState<CameraView> {
 
   void _handleStopRecordBtn() async {
     ref.read(pushUpCounterProvider.notifier).reset();
-    ref
-        .read(preferencesNotifierProvider.notifier)
-        .saveString('pushupData', jsonEncode(exerciseDataList));
+
+    List<dynamic> currentList = box.get('pushupData', defaultValue: []);
+    String exerciseDataListJson = jsonEncode(exerciseDataList);
+    currentList.add(exerciseDataListJson);
+    await box.put('pushupData', currentList);
     _recordTimer?.cancel();
     _isRecordTimerStart = false;
+    ref.refresh(exerciseDataProvider);
+    ref.refresh(stdExerciseDataProvider);
+  }
+
+  void _handleStartRecordBtn() async {
+    _isCountDownTimerStart = true;
+    _countdownTimer =
+        Timer.periodic(const Duration(seconds: 1), (_) => setCountDown());
   }
 
   final orientations = {
