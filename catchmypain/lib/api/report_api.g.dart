@@ -45,6 +45,8 @@ class _ReportApi implements ReportApi {
             ))));
     print(
         'result : member: ${_result.data!['member']},painHistory: ${_result.data!['painHistory']['items'].runtimeType},condition: ${_result.data!['condition']['items'].runtimeType}');
+    //필요한 속성만 사용
+    //.fromJson의 인자를 해당 매개변수 데이터타입 Map<String, dynamic>로 맞춰줘야함
     final value = ApiResponse.fromJson({
       'member': _result.data!['member'],
       'painHistory': _result.data!['painHistory']['items'],
