@@ -30,28 +30,54 @@ class MainPage extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: menuIndex == 3
-            ? Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-                GestureDetector(
-                  onTap: () {
-                    ref.read(cameraIndexProvider.notifier).value = 0;
-                  },
-                  child: const Text(
-                    '운동 선택',
-                    style: TextStyle(color: Colors.black),
+        title: menuIndex == 0
+            ? Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      ref.read(chartIndexProvider.notifier).value = 0;
+                    },
+                    child: const Text(
+                      'PainHistory',
+                      style: TextStyle(color: Colors.black),
+                    ),
                   ),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    ref.read(cameraIndexProvider.notifier).value = 1;
-                  },
-                  child: const Text(
-                    '운동 기록',
-                    style: TextStyle(color: Colors.black),
+                  GestureDetector(
+                    onTap: () {
+                      ref.read(chartIndexProvider.notifier).value = 1;
+                    },
+                    child: const Text(
+                      'Condition',
+                      style: TextStyle(color: Colors.black),
+                    ),
                   ),
-                ),
-              ])
-            : const SizedBox(),
+                ],
+              )
+            : menuIndex == 3
+                ? Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                        GestureDetector(
+                          onTap: () {
+                            ref.read(cameraIndexProvider.notifier).value = 0;
+                          },
+                          child: const Text(
+                            '운동 선택',
+                            style: TextStyle(color: Colors.black),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            ref.read(cameraIndexProvider.notifier).value = 1;
+                          },
+                          child: const Text(
+                            '운동 기록',
+                            style: TextStyle(color: Colors.black),
+                          ),
+                        ),
+                      ])
+                : const SizedBox(),
         actions: [
           Padding(
             padding: const EdgeInsets.all(8.0),

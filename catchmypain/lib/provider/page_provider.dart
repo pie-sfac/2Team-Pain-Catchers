@@ -8,3 +8,4 @@ class Index extends StateNotifier<int> {
 
 final indexProvider = StateNotifierProvider((ref) => Index());
 final cameraIndexProvider = StateNotifierProvider((ref) => Index());
+final chartIndexProvider = StateNotifierProvider((ref) => Index());
