@@ -61,7 +61,7 @@ class Chart extends StatelessWidget {
           //PainHistoryModel 인터페이스를 구현하지만, 실제로는 다른 타입
           //따라서 is 키워드를 사용하여 객체가 특정 타입의 인스턴스인지를 확인
           int level = item.value is PainHistoryModel
-              ? item.value.level.toDouble()
+              ? item.value.level
               : moodsToInt![item.value.condition];
           double topPosition = 0;
           double leftPosition = 0;
@@ -96,11 +96,11 @@ class Chart extends StatelessWidget {
                   (level * (containerHeight / yLength)) +
                   (containerHeight / yLength) / 2 -
                   iconSize / 2 -
-                  textSpanSize!.height;
+                  textSpanSize.height;
               leftPosition = (containerWidth / usedData.length) *
                       item.key + //item.key : index
                   (containerWidth / usedData.length) / 2 -
-                  textSpanSize!.width / 2;
+                  textSpanSize.width / 2;
             } else {
               topPosition = containerHeight -
                   (level * (containerHeight / yLength)) +
@@ -129,7 +129,7 @@ class Chart extends StatelessWidget {
                               : item.value.condition,
                           style: TextStyle(fontSize: fontSize),
                         )
-                      : SizedBox(),
+                      : const SizedBox(),
                   Icon(
                     Icons.circle,
                     color: Colors.amber,
