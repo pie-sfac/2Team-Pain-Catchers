@@ -47,10 +47,12 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
           if (snapshot.connectionState == ConnectionState.done) {
             // 만약 VideoPlayerController가 비디오를 준비했다면,
             // 비디오의 비율에 맞춰서 플레이어를 보여줍니다.
-            return AspectRatio(
-              aspectRatio: _controller.value.aspectRatio,
-              // VideoPlayer 위젯을 사용하여 VideoPlayerController에 대한 비디오를 보여줍니다.
-              child: VideoPlayer(_controller),
+            return Center(
+              child: AspectRatio(
+                aspectRatio: _controller.value.aspectRatio,
+                // VideoPlayer 위젯을 사용하여 VideoPlayerController에 대한 비디오를 보여줍니다.
+                child: VideoPlayer(_controller),
+              ),
             );
           } else {
             // 만약 VideoPlayerController가 아직 비디오를 준비 중이라면,
@@ -59,21 +61,31 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
           }
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // 재생버튼이 눌리면 컨트롤러를 통해 비디오를 재생/일시정지 합니다.
-          setState(() {
-            if (_controller.value.isPlaying) {
-              _controller.pause();
-            } else {
-              _controller.play();
-            }
-          });
-        },
-        // 아이콘을 재생상태에 따라 변경합니다.
-        child: Icon(
-          _controller.value.isPlaying ? Icons.pause : Icons.play_arrow,
-        ),
+      floatingActionButton: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          FloatingActionButton(
+            backgroundColor: Colors.transparent,
+            onPressed: () {
+              // 재생버튼이 눌리면 컨트롤러를 통해 비디오를 재생/일시정지 합니다.
+              setState(() {
+                if (_controller.value.isPlaying) {
+                  _controller.pause();
+                } else {
+                  _controller.play();
+                }
+              });
+            },
+            shape: const CircleBorder(
+              side: BorderSide(color: Colors.white),
+            ),
+            // 아이콘을 재생상태에 따라 변경합니다.
+            child: Icon(
+              _controller.value.isPlaying ? Icons.pause : Icons.play_arrow,
+            ),
+          ),
+        ],
       ),
     );
   }

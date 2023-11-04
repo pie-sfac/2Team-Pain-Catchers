@@ -1,8 +1,10 @@
 import 'dart:io';
+import 'package:catchmypain/view/widgets/exercise_video_listTile.dart';
 import 'package:catchmypain/view/widgets/video_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ffmpeg/flutter_ffmpeg.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as path;
 
 class ExerciseVideoRecordWidget extends StatefulWidget {
   const ExerciseVideoRecordWidget({super.key});
@@ -35,50 +37,33 @@ class _ExerciseVideoRecordWidgetState extends State<ExerciseVideoRecordWidget> {
   Widget build(BuildContext context) {
     return isLoading
         ? const Center(child: CircularProgressIndicator())
-        : GridView.builder(
-            shrinkWrap: true, // 뷰를 자식 요소들의 크기에 맞춤
-            physics: const ClampingScrollPhysics(), // 부모 스크롤에 따라 함께 스크롤
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              // 한 줄에 표시할 아이템의 개수
-              crossAxisCount: 3,
-              // 아이템 간의 가로 간격
-              crossAxisSpacing: 4,
-              // 아이템 간의 세로 간격
-              mainAxisSpacing: 4,
-              // 아이템의 가로 세로 비율
-              childAspectRatio: 1,
+        : Expanded(
+            child: GridView.builder(
+              shrinkWrap: true, // 뷰를 자식 요소들의 크기에 맞춤
+              physics: const ScrollPhysics(), // 부모 스크롤에 따라 함께 스크롤
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 5,
+                crossAxisSpacing: 20,
+                mainAxisSpacing: 4,
+                childAspectRatio: 1,
+              ),
+              itemCount: videoThumbnails.length,
+              itemBuilder: (BuildContext context, int index) {
+                String thumbnailPath = videoThumbnails.values.elementAt(index);
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => VideoPlayerScreen(
+                            videoPath: videoThumbnails.keys.elementAt(index)),
+                      ),
+                    );
+                  },
+                  child: ExerciseVideoListTile(thumbnailPath: thumbnailPath),
+                );
+              },
             ),
-            itemCount: videoThumbnails.length,
-            itemBuilder: (BuildContext context, int index) {
-              String thumbnailPath = videoThumbnails.values.elementAt(index);
-              return GestureDetector(
-                onTap: () {
-                  // 여기에 Navigator를 사용하여 비디오 플레이어 화면으로 이동합니다.
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => VideoPlayerScreen(
-                          videoPath: videoThumbnails.keys.elementAt(index)),
-                    ),
-                  );
-                },
-                child: GridTile(
-                  footer: const Center(child: Text('Its Test Image')),
-                  child: SizedBox(
-                    height: 100,
-                    width: 100,
-                    child: Image.file(
-                      File(thumbnailPath),
-                      fit: BoxFit.cover, // 이미지를 그리드에 맞춰서 채우도록 함
-                      errorBuilder: (BuildContext context, Object exception,
-                          StackTrace? stackTrace) {
-                        return const Icon(Icons.error); // 이미지 로드 실패 시 아이콘 표시
-                      },
-                    ),
-                  ), // 썸네일 하단에 텍스트 추가
-                ),
-              );
-            },
           );
   }
 }
@@ -117,20 +102,26 @@ class VideoManager {
     return thumbnails;
   }
 
-  // Retrieves the first frame of a video file and saves it as a thumbnail.
   Future<String> getFirstFrame(String videoPath) async {
-    final String thumbnailPath =
-        '${(await getTemporaryDirectory()).path}/${DateTime.now().millisecondsSinceEpoch}_thumbnail.jpg';
+    final String thumbnailFileName =
+        '${path.basenameWithoutExtension(videoPath)}_thumbnail.jpg';
+    final Directory tempDir = await getTemporaryDirectory();
+    final String thumbnailPath = path.join(tempDir.path, thumbnailFileName);
 
-    // Execute the FFmpeg command to extract the first frame
-    int rc = await _ffmpeg.execute(
-        '-i "$videoPath" -ss 00:00:01.000 -frames:v 1 "$thumbnailPath"');
-    if (rc == 0) {
-      print("Thumbnail created for $videoPath");
+    final file = File(thumbnailPath);
+    if (await file.exists()) {
+      print("Thumbnail already exists for $videoPath");
       return thumbnailPath;
     } else {
-      print("Thumbnail creation failed for $videoPath with rc: $rc");
-      return '';
+      int rc = await _ffmpeg.execute(
+          '-i "$videoPath" -ss 00:00:01.000 -frames:v 1 "$thumbnailPath"');
+      if (rc == 0) {
+        print("Thumbnail created for $videoPath");
+        return thumbnailPath;
+      } else {
+        print("Thumbnail creation failed for $videoPath with rc: $rc");
+        return '';
+      }
     }
   }
 }
