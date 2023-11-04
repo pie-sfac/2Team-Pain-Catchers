@@ -1,4 +1,3 @@
-
 // ignore_for_file: prefer_const_constructors
 
 import 'package:catchmypain/provider/drawing_provider.dart';
@@ -7,13 +6,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class DrawingPage extends ConsumerWidget {
-   const DrawingPage({super.key});
+  const DrawingPage({super.key});
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // colorProvider를 감시하여 현재 Color 상태를 가져옵니다.
     // final selectedColor = ref.watch(colorProvider);
     // final strokeSize = ref.watch(sizeProvider);
-    // final allSketches = ref.watch(sketchesProvider); 
+    // final allSketches = ref.watch(sketchesProvider);
     // final currentSketch = ref.watch(sketchProvider);
     bool isMenuOpen = true;
 
@@ -32,10 +31,10 @@ class DrawingPage extends ConsumerWidget {
             children: [
               Container(
                 decoration: BoxDecoration(
-                    image:
-                        DecorationImage(image: AssetImage('assets/sidePlank.jpg'))),
+                    image: DecorationImage(
+                        image: AssetImage('asset/images/sidePlank.jpg'))),
               ),
-              Container(
+              SizedBox(
                 //color: kCanvasColor,
                 width: double.maxFinite,
                 height: double.maxFinite,
@@ -58,35 +57,40 @@ class DrawingPage extends ConsumerWidget {
                             IconButton(
                               icon: Icon(Icons.circle),
                               onPressed: () {
-                                 ref.read(colorProvider.notifier).state = Colors.red;
+                                ref.read(colorProvider.notifier).state =
+                                    Colors.red;
                               },
                               color: Colors.red,
                             ),
                             IconButton(
                               icon: Icon(Icons.circle),
                               onPressed: () {
-                                 ref.read(colorProvider.notifier).state = Colors.yellow;
+                                ref.read(colorProvider.notifier).state =
+                                    Colors.yellow;
                               },
                               color: Colors.yellow,
                             ),
                             IconButton(
                               icon: Icon(Icons.circle),
                               onPressed: () {
-                                ref.read(colorProvider.notifier).state = Colors.blue;
+                                ref.read(colorProvider.notifier).state =
+                                    Colors.blue;
                               },
                               color: Colors.blue,
                             ),
                             IconButton(
                               icon: Icon(Icons.circle),
                               onPressed: () {
-                                 ref.read(colorProvider.notifier).state = Colors.green;
+                                ref.read(colorProvider.notifier).state =
+                                    Colors.green;
                               },
                               color: Colors.green,
                             ),
                             IconButton(
                               icon: Icon(Icons.circle),
                               onPressed: () {
-                                 ref.read(colorProvider.notifier).state = Colors.black;
+                                ref.read(colorProvider.notifier).state =
+                                    Colors.black;
                               },
                               color: Colors.black,
                             ),
