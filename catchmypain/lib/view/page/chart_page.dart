@@ -119,11 +119,6 @@ class ChartPage extends ConsumerWidget {
           condition = report.condition;
           print(memberName);
           print(condition);
-          print('asmap');
-          condition.asMap().entries.map((item) {
-            print('1');
-            return;
-          });
 
           //x축 텍스트의 높이와 아이콘 사이즈를 동일하게 설정
           if (textSpanSize == null && condition.isNotEmpty) {
