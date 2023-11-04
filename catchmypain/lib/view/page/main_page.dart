@@ -10,13 +10,13 @@ class MainPage extends ConsumerWidget {
   MainPage({super.key});
 
   int bottomSelectedIndex = 0;
-  final PageController _pageController = PageController(
-    initialPage: 0,
-  );
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final int menuIndex = ref.watch(indexProvider) as int;
+    final PageController pageController = PageController(
+      initialPage: menuIndex,
+    );
     const List<BottomNavigationBarItem> navItems = [
       BottomNavigationBarItem(
           icon: Icon(Icons.add_chart_outlined), label: '차트'),
@@ -30,28 +30,54 @@ class MainPage extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: menuIndex == 3
-            ? Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-                GestureDetector(
-                  onTap: () {
-                    ref.read(cameraIndexProvider.notifier).value = 0;
-                  },
-                  child: const Text(
-                    '운동 선택',
-                    style: TextStyle(color: Colors.black),
+        title: menuIndex == 0
+            ? Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      ref.read(chartIndexProvider.notifier).value = 0;
+                    },
+                    child: const Text(
+                      'PainHistory',
+                      style: TextStyle(color: Colors.black),
+                    ),
                   ),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    ref.read(cameraIndexProvider.notifier).value = 1;
-                  },
-                  child: const Text(
-                    '운동 기록',
-                    style: TextStyle(color: Colors.black),
+                  GestureDetector(
+                    onTap: () {
+                      ref.read(chartIndexProvider.notifier).value = 1;
+                    },
+                    child: const Text(
+                      'Condition',
+                      style: TextStyle(color: Colors.black),
+                    ),
                   ),
-                ),
-              ])
-            : const SizedBox(),
+                ],
+              )
+            : menuIndex == 3
+                ? Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                        GestureDetector(
+                          onTap: () {
+                            ref.read(cameraIndexProvider.notifier).value = 0;
+                          },
+                          child: const Text(
+                            '운동 선택',
+                            style: TextStyle(color: Colors.black),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            ref.read(cameraIndexProvider.notifier).value = 1;
+                          },
+                          child: const Text(
+                            '운동 기록',
+                            style: TextStyle(color: Colors.black),
+                          ),
+                        ),
+                      ])
+                : const SizedBox(),
         actions: [
           Padding(
             padding: const EdgeInsets.all(8.0),
@@ -103,7 +129,7 @@ class MainPage extends ConsumerWidget {
         leadingWidth: 80,
       ),
       body: PageView(
-          controller: _pageController,
+          controller: pageController,
           onPageChanged: (i) => ref.read(indexProvider.notifier).value = i,
           children: const [
             ChartPage(),
@@ -114,7 +140,7 @@ class MainPage extends ConsumerWidget {
       bottomNavigationBar: BottomNavigationBar(
         onTap: (value) {
           ref.read(indexProvider.notifier).value = value;
-          _pageController.jumpToPage(value);
+          pageController.jumpToPage(value);
         },
         currentIndex: menuIndex,
         items: navItems,

@@ -28,6 +28,8 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  uuid: ^4.1.0
+  dio: any
   camera: ^0.10.5+5
   cupertino_icons: ^1.0.2
   flutter:
@@ -35,15 +37,25 @@ dependencies:
   flutter_riverpod: ^2.4.4
   go_router: ^12.0.0
   google_ml_kit: ^0.16.2
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
   image: ^4.1.3
   image_picker: ^1.0.4
   path: ^1.8.3
   path_provider: ^2.1.1
+  retrofit: ^4.0.3
+  json_annotation: ^4.8.1
+  riverpod_annotation: ^2.2.1
   riverpod: ^2.4.4
+  freezed_annotation: ^2.4.1
   shared_preferences: ^2.2.2
 
 dev_dependencies:
   flutter_lints: ^2.0.0
+  retrofit_generator: ^8.0.2
+  build_runner: ^2.4.6
+  json_serializable: ^6.6.2
+  freezed: ^2.4.5
   flutter_test:
     sdk: flutter
 
