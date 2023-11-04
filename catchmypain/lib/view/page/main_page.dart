@@ -50,6 +50,15 @@ class MainPage extends ConsumerWidget {
                     style: TextStyle(color: Colors.black),
                   ),
                 ),
+                GestureDetector(
+                  onTap: () {
+                    ref.read(cameraIndexProvider.notifier).value = 2;
+                  },
+                  child: const Text(
+                    '운동 영상',
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ),
               ])
             : const SizedBox(),
         actions: [
