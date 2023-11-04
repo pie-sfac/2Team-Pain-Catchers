@@ -7,6 +7,8 @@ import 'package:catchmypain/provider/push_up_provider.dart';
 import 'package:catchmypain/util/utils.dart' as utils;
 import 'package:camera/camera.dart';
 import 'package:catchmypain/model/exercisedata.dart';
+import 'package:catchmypain/view/widgets/camer_view_widgets/countdown_timer.dart';
+import 'package:catchmypain/view/widgets/camer_view_widgets/record_timer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -43,9 +45,7 @@ class CameraView extends ConsumerStatefulWidget {
 
 class _CameraViewState extends ConsumerState<CameraView> {
   static List<CameraDescription> _cameras = [];
-  InputImage? currentCameraImage;
   CameraController? _controller;
-  XFile? videoFile;
   int _cameraIndex = -1;
   double _currentZoomLevel = 1.0;
   double _minAvailableZoom = 1.0;
@@ -54,10 +54,11 @@ class _CameraViewState extends ConsumerState<CameraView> {
   double _maxAvailableExposureOffset = 0.0;
   double _currentExposureOffset = 0.0;
   bool _changingCameraLens = false;
-  Duration myDuration = const Duration(seconds: 5);
+  bool _changingPoseDetection = true;
+  Duration _myDuration = const Duration(seconds: 5);
+  Duration _recordDuration = const Duration(seconds: 0);
   bool _isCountDownTimerStart = false;
   bool _isRecordTimerStart = false;
-  Duration _recordDuration = const Duration(seconds: 0);
 
   PoseLandmark? p1;
   PoseLandmark? p2;
@@ -89,11 +90,11 @@ class _CameraViewState extends ConsumerState<CameraView> {
       }
     }
     if (_cameraIndex != -1) {
-      _startLiveFeed();
+      _changingPoseDetection == true ? _startLiveFeed() : _startVideoFeed();
     }
   }
 
-  void printValue(DateTime startTime) {
+  void recordValue(DateTime startTime) {
     ExerciseData exerciseData = ExerciseData(
         count: 0,
         poseState: '',
@@ -147,7 +148,6 @@ class _CameraViewState extends ConsumerState<CameraView> {
         p5 = getPoseLandmark(PoseLandmarkType.leftElbow);
         p6 = getPoseLandmark(PoseLandmarkType.leftWrist);
       }
-
       //verification
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (p1 != null &&
@@ -158,12 +158,10 @@ class _CameraViewState extends ConsumerState<CameraView> {
             p6 != null) {
           final rtaAngle = utils.angle(p1!, p2!, p3!);
           final ltaAngle = utils.angle(p4!, p5!, p6!);
-
           final rta =
               utils.isPushUp(rtaAngle, ref.watch(pushUpCounterProvider));
           final lta =
               utils.isPushUp(ltaAngle, ref.watch(pushUpCounterProvider));
-
           // If both arms satisfy push-up conditions
           if (rta != null && lta != null) {
             if (rta == PushUpState.init && lta == PushUpState.init) {
@@ -187,23 +185,12 @@ class _CameraViewState extends ConsumerState<CameraView> {
     super.didUpdateWidget(oldWidget);
   }
 
-  void _saveImage(Uint8List? byteData) async {
-    final directory = await getApplicationDocumentsDirectory();
-    final imagePath = path.join(
-        directory.path, 'pushup_${DateTime.now().millisecondsSinceEpoch}.png');
-    final File imageFile = File(imagePath);
-
-    // Save the image as a PNG file
-    await imageFile.writeAsBytes(byteData!);
-    print("Image saved to: $imagePath");
-  }
-
   @override
   void dispose() {
     _recordTimer?.cancel();
     _countdownTimer?.cancel();
     _timer?.cancel();
-    _stopLiveFeed();
+    _changingPoseDetection == true ? _stopLiveFeed() : _stopVideoFeed();
     //box.clear();
     super.dispose();
   }
@@ -217,8 +204,6 @@ class _CameraViewState extends ConsumerState<CameraView> {
     if (_cameras.isEmpty) return Container();
     if (_controller == null) return Container();
     if (_controller?.value.isInitialized == false) return Container();
-    String strDigits(int n) => n.toString().padLeft(2, '0');
-    String seconds = strDigits(myDuration.inSeconds.remainder(60));
 
     return Container(
       color: Colors.black,
@@ -232,20 +217,25 @@ class _CameraViewState extends ConsumerState<CameraView> {
                   )
                 : CameraPreview(
                     _controller!,
-                    child: widget.customPaint,
+                    child: _changingPoseDetection == true
+                        ? widget.customPaint
+                        : const SizedBox.shrink(),
                   ),
           ),
-          _exerciseTitle(),
-          _isCountDownTimerStart == true ? _timerTxt(seconds) : _recordTxt(),
           _startRecordBtn(),
-          if (_isRecordTimerStart == true)
-            if (_isRecordTimerStart) ...[
-              _poseStatetxt(),
-              _counterWidget(),
-            ],
+          _isCountDownTimerStart == true
+              ? CountDownTimer(myDuration: _myDuration)
+              : RecordTimer(
+                  isRecordTimerStart: _isRecordTimerStart,
+                  recordDuration: _recordDuration),
+          if (_isRecordTimerStart == true &&
+              _changingPoseDetection == true) ...[
+            _poseStatetxt(),
+            _counterWidget(),
+          ],
           _backButton(),
           _switchLiveCameraToggle(),
-          //_detectionViewModeToggle(),
+          _switchPoseDetectionToggle(),
           _zoomControl(),
           _exposureControl(),
         ],
@@ -258,9 +248,45 @@ class _CameraViewState extends ConsumerState<CameraView> {
       left: 0,
       top: 50,
       right: MediaQuery.sizeOf(context).width * 0.75,
+      child: Column(
+        children: [
+          const Text(
+            'Current Pose State',
+            style: TextStyle(
+              color: Colors.white,
+            ),
+          ),
+          Container(
+            width: 160,
+            decoration: BoxDecoration(
+              color: Colors.black54,
+              border:
+                  Border.all(color: Colors.white.withOpacity(0.4), width: 4.0),
+              borderRadius: const BorderRadius.all(Radius.circular(12)),
+            ),
+            child: Text(
+              ref.read(pushUpCounterProvider).name,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 30,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _counterWidget() {
+    return Positioned(
+      left: 0,
+      top: 50,
+      right: 0,
       child: Column(children: [
         const Text(
-          'Current Pose State',
+          'Counter',
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
@@ -268,7 +294,7 @@ class _CameraViewState extends ConsumerState<CameraView> {
           ),
         ),
         Container(
-          width: 160,
+          width: 70,
           decoration: BoxDecoration(
             color: Colors.black54,
             border:
@@ -276,7 +302,7 @@ class _CameraViewState extends ConsumerState<CameraView> {
             borderRadius: const BorderRadius.all(Radius.circular(12)),
           ),
           child: Text(
-            ref.read(pushUpCounterProvider).name,
+            '${ref.read(pushUpCounterProvider.notifier).counter}',
             textAlign: TextAlign.center,
             style: const TextStyle(
               color: Colors.white,
@@ -286,62 +312,6 @@ class _CameraViewState extends ConsumerState<CameraView> {
           ),
         ),
       ]),
-    );
-  }
-
-  Widget _exerciseTitle() {
-    return Text(
-      widget.exercise,
-      style: const TextStyle(fontSize: 40, color: Colors.white),
-    );
-  }
-
-  Widget _recordTxt() {
-    return _isRecordTimerStart
-        ? Positioned(
-            left: MediaQuery.sizeOf(context).width * 0.8,
-            top: 50,
-            right: 0,
-            child: Column(
-              children: [
-                Container(
-                  width: 125,
-                  decoration: BoxDecoration(
-                    color: Colors.black54,
-                    border: Border.all(
-                        color: Colors.white.withOpacity(0.4), width: 4.0),
-                    borderRadius: const BorderRadius.all(Radius.circular(12)),
-                  ),
-                  child: Text(
-                    textAlign: TextAlign.center,
-                    "${_recordDuration.inMinutes}:${_recordDuration.inSeconds % 60}",
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 45,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          )
-        : const SizedBox();
-  }
-
-  Widget _timerTxt(String sec) {
-    return Positioned(
-      bottom: MediaQuery.of(context).size.height * 0.5,
-      right: 0,
-      left: 0,
-      child: Text(
-        textAlign: TextAlign.center,
-        sec,
-        style: const TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
-          fontSize: 90,
-        ),
-      ),
     );
   }
 
@@ -390,42 +360,6 @@ class _CameraViewState extends ConsumerState<CameraView> {
     );
   }
 
-  Widget _counterWidget() {
-    return Positioned(
-      left: 0,
-      top: 50,
-      right: 0,
-      child: Column(children: [
-        const Text(
-          'Counter',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 10,
-          ),
-        ),
-        Container(
-          width: 70,
-          decoration: BoxDecoration(
-            color: Colors.black54,
-            border:
-                Border.all(color: Colors.white.withOpacity(0.4), width: 4.0),
-            borderRadius: const BorderRadius.all(Radius.circular(12)),
-          ),
-          child: Text(
-            '${ref.read(pushUpCounterProvider.notifier).counter}',
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 30,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-      ]),
-    );
-  }
-
   Widget _backButton() => Positioned(
         top: 40,
         left: 8,
@@ -447,7 +381,7 @@ class _CameraViewState extends ConsumerState<CameraView> {
         ),
       );
 
-  Widget _detectionViewModeToggle() => Positioned(
+  Widget _switchPoseDetectionToggle() => Positioned(
         bottom: 8,
         left: 8,
         child: SizedBox(
@@ -455,10 +389,10 @@ class _CameraViewState extends ConsumerState<CameraView> {
           width: 50.0,
           child: FloatingActionButton(
             heroTag: Object(),
-            onPressed: widget.onDetectorViewModeChanged,
+            onPressed: _toggleMode,
             backgroundColor: Colors.black54,
             child: const Icon(
-              Icons.photo_library_outlined,
+              Icons.find_in_page,
               size: 25,
             ),
           ),
@@ -624,10 +558,111 @@ class _CameraViewState extends ConsumerState<CameraView> {
     });
   }
 
-  Future _stopLiveFeed() async {
-    await _controller?.stopImageStream();
+//////////////////////////////////////////////
+  Future<void> _startVideoFeed() async {
+    final camera = _cameras[_cameraIndex];
+    _controller = CameraController(
+      camera,
+      ResolutionPreset.high,
+      enableAudio: false,
+      imageFormatGroup: Platform.isAndroid
+          ? ImageFormatGroup.yuv420
+          : ImageFormatGroup.bgra8888,
+    );
+
+    try {
+      await _controller?.initialize();
+      if (!mounted) return;
+
+      // Initialize zoom and exposure
+      _currentZoomLevel = await _controller?.getMinZoomLevel() ?? 1.0;
+      _minAvailableZoom = _currentZoomLevel;
+      _maxAvailableZoom = await _controller?.getMaxZoomLevel() ?? 1.0;
+      _currentExposureOffset = 0.0;
+      _minAvailableExposureOffset =
+          await _controller?.getMinExposureOffset() ?? 0.0;
+      _maxAvailableExposureOffset =
+          await _controller?.getMaxExposureOffset() ?? 0.0;
+
+      setState(() {});
+
+      // If you have any callbacks to notify that the camera is ready
+      widget.onCameraFeedReady?.call();
+      widget.onCameraLensDirectionChanged?.call(camera.lensDirection);
+    } catch (e) {
+      print(e);
+      if (!mounted) return;
+      setState(() {});
+      // Handle if the camera initialization or video recording fails
+      // For example, show an error message
+    }
+  }
+
+  Future<String?> _stopVideoFeed() async {
+    String? videoPath;
+
+    if (_controller?.value.isRecordingVideo == true) {
+      // Stop video recording and get the file path of the recorded video
+      XFile? videoFile;
+      try {
+        videoFile = await _controller?.stopVideoRecording();
+        videoPath = videoFile?.path;
+      } on CameraException catch (e) {
+        print(e);
+        return null;
+      }
+    }
     await _controller?.dispose();
     _controller = null;
+    return videoPath;
+  }
+
+  // 포즈 감지 및 비디오 녹화 중지
+  Future<void> _stopEverything() async {
+    if (_changingPoseDetection) {
+      await _stopLiveFeed();
+    } else {
+      await _stopVideoFeed();
+    }
+  }
+
+  // 토글 버튼 처리
+  void _toggleMode() async {
+    if (_changingPoseDetection) {
+      // ML Kit 사용 중이면 모두 중지하고 비디오 녹화 시작
+      await _stopEverything().then((_) => _startVideoFeed());
+    } else {
+      // 비디오 녹화 중이면 모두 중지하고 ML Kit 시작
+      await _stopEverything().then((_) => _startLiveFeed());
+    }
+    _changingPoseDetection = !_changingPoseDetection; // 토글 상태 변경
+  }
+
+///////////////////////////////////////////
+  Future _stopLiveFeed() async {
+    try {
+      // 이미지 스트림을 중지합니다. null과 이미지 스트림 상태를 체크합니다.
+      if (_controller != null && _controller!.value.isStreamingImages) {
+        await _controller?.stopImageStream();
+      }
+
+      // 컨트롤러를 dispose 합니다.
+      if (_controller != null) {
+        var oldController = _controller;
+        _controller = null; // 먼저 컨트롤러를 null로 설정하여 더 이상 사용되지 않도록 합니다.
+        await oldController?.dispose().then((value) {
+          // dispose가 완료된 후 UI를 업데이트합니다.
+          if (mounted) {
+            setState(() {});
+          }
+        }).catchError((error) {
+          // 오류 처리
+          _controller = oldController; // 오류가 발생한 경우, 컨트롤러를 복원합니다.
+        });
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 
   Future _switchLiveCamera() async {
@@ -640,7 +675,6 @@ class _CameraViewState extends ConsumerState<CameraView> {
   }
 
   void _processCameraImage(CameraImage image) {
-    currentCameraImage = _inputImageFromCameraImage(image);
     final inputImage = _inputImageFromCameraImage(image);
     if (inputImage == null) return;
     widget.onImage(inputImage);
@@ -649,7 +683,7 @@ class _CameraViewState extends ConsumerState<CameraView> {
   void setCountDown() {
     const reduceSecondsBy = 1;
     setState(() {
-      final seconds = myDuration.inSeconds - reduceSecondsBy;
+      final seconds = _myDuration.inSeconds - reduceSecondsBy;
       if (seconds < 0) {
         _countdownTimer!.cancel();
         _isCountDownTimerStart = false;
@@ -657,7 +691,7 @@ class _CameraViewState extends ConsumerState<CameraView> {
         _isRecordTimerStart = true;
         _handleRecordDuration();
       } else {
-        myDuration = Duration(seconds: seconds);
+        _myDuration = Duration(seconds: seconds);
       }
     });
   }
@@ -666,9 +700,11 @@ class _CameraViewState extends ConsumerState<CameraView> {
     final startTime = DateTime.now();
     _recordTimer =
         Timer.periodic(const Duration(seconds: 1), (_) => setRecordTime());
-    _timer = Timer.periodic(const Duration(milliseconds: 250), (timer) {
-      printValue(startTime);
-    });
+    _changingPoseDetection == true
+        ? _timer = Timer.periodic(const Duration(milliseconds: 250), (timer) {
+            recordValue(startTime);
+          })
+        : _controller!.startVideoRecording();
   }
 
   void setRecordTime() {
@@ -680,19 +716,36 @@ class _CameraViewState extends ConsumerState<CameraView> {
   }
 
   void _handleStopRecordBtn() async {
-    ref.read(pushUpCounterProvider.notifier).reset();
+    if (_changingPoseDetection) {
+      ref.read(pushUpCounterProvider.notifier).reset();
 
-    List<dynamic> currentList = box.get('pushupData', defaultValue: []);
-    String exerciseDataListJson = jsonEncode(exerciseDataList);
-    currentList.add(exerciseDataListJson);
-    await box.put('pushupData', currentList);
+      List<dynamic> currentList = box.get('pushupData', defaultValue: []);
+      String exerciseDataListJson = jsonEncode(exerciseDataList);
+      currentList.add(exerciseDataListJson);
+      await box.put('pushupData', currentList);
+
+      ref.refresh(exerciseDataProvider);
+      ref.refresh(stdExerciseDataProvider);
+    } else {
+      var videoFile = await _controller!.stopVideoRecording();
+      // 앱의 문서 디렉토리를 얻습니다.
+      final Directory appDirectory = await getApplicationDocumentsDirectory();
+      final String videoDirectory = '${appDirectory.path}/Videos';
+      await Directory(videoDirectory).create(recursive: true);
+
+      // 새 파일 경로를 생성합니다.
+      final String filePath =
+          '$videoDirectory/${path.basename(videoFile.path)}';
+
+      // 원본 비디오 파일을 새 위치로 이동합니다.
+      await videoFile.saveTo(filePath);
+
+      setState(() {});
+    }
     _recordDuration = const Duration(seconds: 0);
-    myDuration = const Duration(seconds: 5);
+    _myDuration = const Duration(seconds: 5);
     _recordTimer?.cancel();
     _isRecordTimerStart = false;
-
-    ref.refresh(exerciseDataProvider);
-    ref.refresh(stdExerciseDataProvider);
   }
 
   void _handleStartRecordBtn() async {
