@@ -143,3 +143,12 @@ lib/generated_plugin_registrant.dart
 >>>>>>> sanghyunchoi
 catchmypain/macos/Flutter/GeneratedPluginRegistrant.swift
 catchmypain/macos/
+<<<<<<< HEAD
+=======
+'catchmypain/linux/flutter/generated_plugin_registrant.cc' 
+'catchmypain/linux/flutter/generated_plugin_registrant.h' 
+'catchmypain/linux/flutter/generated_plugins.cmake' 
+'catchmypain/windows/flutter/generated_plugin_registrant.cc' 
+'catchmypain/windows/flutter/generated_plugin_registrant.h' 
+'catchmypain/windows/flutter/generated_plugins.cmake' 
+>>>>>>> main

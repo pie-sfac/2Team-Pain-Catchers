@@ -1,6 +1,7 @@
 import 'package:catchmypain/provider/page_provider.dart';
 import 'package:catchmypain/view/widgets/exercise_List.dart';
 import 'package:catchmypain/view/widgets/exercise_record.dart';
+import 'package:catchmypain/view/widgets/exercise_video_record.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -27,6 +28,8 @@ class _ExerciseCameraPageState extends ConsumerState<ExerciseCameraPage> {
               const ExerciseListWidget(),
             ] else if (cameraMenuIndex == 1) ...[
               const ExerciseRecordWidget()
+            ] else if (cameraMenuIndex == 2) ...[
+              const ExerciseVideoRecordWidget()
             ]
           ],
         ),
