@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:catchmypain/painter/pose_painter.dart';
-import 'package:catchmypain/provider/preferences_provider.dart';
+import 'package:catchmypain/provider/exercise_record_provider.dart';
 import 'package:catchmypain/provider/push_up_provider.dart';
 import 'package:catchmypain/util/utils.dart' as utils;
 import 'package:camera/camera.dart';
@@ -12,6 +12,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_ml_kit/google_ml_kit.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 
@@ -68,7 +69,7 @@ class _CameraViewState extends ConsumerState<CameraView> {
   Timer? _countdownTimer;
   Timer? _recordTimer;
   List<ExerciseData> exerciseDataList = [];
-
+  late Box box;
   @override
   void initState() {
     super.initState();
@@ -77,6 +78,7 @@ class _CameraViewState extends ConsumerState<CameraView> {
   }
 
   void _initialize() async {
+    box = await Hive.openBox('myBox');
     if (_cameras.isEmpty) {
       _cameras = await availableCameras();
     }
@@ -117,14 +119,14 @@ class _CameraViewState extends ConsumerState<CameraView> {
       final elapsedTime = DateTime.now().difference(startTime);
       exerciseData.count = ref.read(pushUpCounterProvider.notifier).counter;
       exerciseData.poseState = ref.read(pushUpCounterProvider).name;
-      exerciseData.angles.rightWES = rtaAngle;
-      exerciseData.angles.leftWES = ltaAngle;
+      exerciseData.angles.rightWES = rtaAngle.roundToDouble();
+      exerciseData.angles.leftWES = ltaAngle.roundToDouble();
       exerciseData.angles.durationTime =
           (elapsedTime.inMilliseconds / 1000).toStringAsFixed(2);
+      String formattedDateTime =
+          "${startTime.year}-${startTime.month.toString().padLeft(2, '0')}-${startTime.day.toString().padLeft(2, '0')} ${startTime.hour.toString().padLeft(2, '0')}:${startTime.minute.toString().padLeft(2, '0')}:${startTime.second.toString().padLeft(2, '0')}";
+      exerciseData.recordTime = formattedDateTime;
       exerciseDataList.add(exerciseData);
-      print('durationTime = ${exerciseData.angles.durationTime}  /&/&/&/& '
-          'counter = ${exerciseData.count} /&/&/&/& poseState = ${exerciseData.poseState}  /&/&/&/& '
-          'rtaAngle : ${exerciseData.angles.rightWES.toStringAsFixed(2)} /&/&/&/& ltaAngle: ${exerciseData.angles.leftWES.toStringAsFixed(2)}');
     }
   }
 
@@ -202,7 +204,7 @@ class _CameraViewState extends ConsumerState<CameraView> {
     _countdownTimer?.cancel();
     _timer?.cancel();
     _stopLiveFeed();
-    print('excerciseData Size : ${exerciseDataList.length}');
+    //box.clear();
     super.dispose();
   }
 
@@ -236,7 +238,11 @@ class _CameraViewState extends ConsumerState<CameraView> {
           _exerciseTitle(),
           _isCountDownTimerStart == true ? _timerTxt(seconds) : _recordTxt(),
           _startRecordBtn(),
-          _isRecordTimerStart == true ? _counterWidget() : const SizedBox(),
+          if (_isRecordTimerStart == true)
+            if (_isRecordTimerStart) ...[
+              _poseStatetxt(),
+              _counterWidget(),
+            ],
           _backButton(),
           _switchLiveCameraToggle(),
           //_detectionViewModeToggle(),
@@ -244,6 +250,42 @@ class _CameraViewState extends ConsumerState<CameraView> {
           _exposureControl(),
         ],
       ),
+    );
+  }
+
+  Widget _poseStatetxt() {
+    return Positioned(
+      left: 0,
+      top: 50,
+      right: MediaQuery.sizeOf(context).width * 0.75,
+      child: Column(children: [
+        const Text(
+          'Current Pose State',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 10,
+          ),
+        ),
+        Container(
+          width: 160,
+          decoration: BoxDecoration(
+            color: Colors.black54,
+            border:
+                Border.all(color: Colors.white.withOpacity(0.4), width: 4.0),
+            borderRadius: const BorderRadius.all(Radius.circular(12)),
+          ),
+          child: Text(
+            ref.read(pushUpCounterProvider).name,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 30,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ]),
     );
   }
 
@@ -604,12 +646,6 @@ class _CameraViewState extends ConsumerState<CameraView> {
     widget.onImage(inputImage);
   }
 
-  void _handleStartRecordBtn() {
-    _isCountDownTimerStart = true;
-    _countdownTimer =
-        Timer.periodic(const Duration(seconds: 1), (_) => setCountDown());
-  }
-
   void setCountDown() {
     const reduceSecondsBy = 1;
     setState(() {
@@ -617,7 +653,7 @@ class _CameraViewState extends ConsumerState<CameraView> {
       if (seconds < 0) {
         _countdownTimer!.cancel();
         _isCountDownTimerStart = false;
-        ref.read(pushUpCounterProvider.notifier).counter = 0;
+        ref.read(pushUpCounterProvider.notifier).reset();
         _isRecordTimerStart = true;
         _handleRecordDuration();
       } else {
@@ -645,11 +681,24 @@ class _CameraViewState extends ConsumerState<CameraView> {
 
   void _handleStopRecordBtn() async {
     ref.read(pushUpCounterProvider.notifier).reset();
-    ref
-        .read(preferencesNotifierProvider.notifier)
-        .saveString('pushupData', jsonEncode(exerciseDataList));
+
+    List<dynamic> currentList = box.get('pushupData', defaultValue: []);
+    String exerciseDataListJson = jsonEncode(exerciseDataList);
+    currentList.add(exerciseDataListJson);
+    await box.put('pushupData', currentList);
+    _recordDuration = const Duration(seconds: 0);
+    myDuration = const Duration(seconds: 5);
     _recordTimer?.cancel();
     _isRecordTimerStart = false;
+
+    ref.refresh(exerciseDataProvider);
+    ref.refresh(stdExerciseDataProvider);
+  }
+
+  void _handleStartRecordBtn() async {
+    _isCountDownTimerStart = true;
+    _countdownTimer =
+        Timer.periodic(const Duration(seconds: 1), (_) => setCountDown());
   }
 
   final orientations = {
