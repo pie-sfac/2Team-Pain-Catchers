@@ -37,33 +37,48 @@ class _ExerciseVideoRecordWidgetState extends State<ExerciseVideoRecordWidget> {
   Widget build(BuildContext context) {
     return isLoading
         ? const Center(child: CircularProgressIndicator())
-        : Expanded(
-            child: GridView.builder(
-              shrinkWrap: true, // 뷰를 자식 요소들의 크기에 맞춤
-              physics: const ScrollPhysics(), // 부모 스크롤에 따라 함께 스크롤
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 5,
-                crossAxisSpacing: 20,
-                mainAxisSpacing: 4,
-                childAspectRatio: 1,
+        : Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(
+                height: 10,
               ),
-              itemCount: videoThumbnails.length,
-              itemBuilder: (BuildContext context, int index) {
-                String thumbnailPath = videoThumbnails.values.elementAt(index);
-                return GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => VideoPlayerScreen(
-                            videoPath: videoThumbnails.keys.elementAt(index)),
-                      ),
-                    );
-                  },
-                  child: ExerciseVideoListTile(thumbnailPath: thumbnailPath),
-                );
-              },
-            ),
+              const Text(
+                '팔 올리기',
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.left,
+              ),
+              GridView.builder(
+                shrinkWrap: true, // 뷰를 자식 요소들의 크기에 맞춤
+                physics: const ScrollPhysics(), // 부모 스크롤에 따라 함께 스크롤
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 5,
+                  crossAxisSpacing: 20,
+                  mainAxisSpacing: 4,
+                  childAspectRatio: 1,
+                ),
+                itemCount: videoThumbnails.length,
+                itemBuilder: (BuildContext context, int index) {
+                  String thumbnailPath =
+                      videoThumbnails.values.elementAt(index);
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => VideoPlayerScreen(
+                              videoPath: videoThumbnails.keys.elementAt(index)),
+                        ),
+                      );
+                    },
+                    child: ExerciseVideoListTile(thumbnailPath: thumbnailPath),
+                  );
+                },
+              ),
+            ],
           );
   }
 }

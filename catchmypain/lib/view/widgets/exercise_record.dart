@@ -35,7 +35,7 @@ class _ExerciseRecordWidgetState extends ConsumerState<ExerciseRecordWidget> {
                   height: 10,
                 ),
                 const Text(
-                  '푸시업',
+                  '팔 올리기',
                   style: TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
