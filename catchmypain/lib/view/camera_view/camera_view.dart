@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:catchmypain/painter/pose_painter.dart';
 import 'package:catchmypain/provider/exercise_record_provider.dart';
 import 'package:catchmypain/provider/push_up_provider.dart';
+import 'package:catchmypain/util/exercise_verification.dart';
 import 'package:catchmypain/util/utils.dart' as utils;
 import 'package:camera/camera.dart';
 import 'package:catchmypain/model/exercisedata.dart';
@@ -60,12 +61,19 @@ class _CameraViewState extends ConsumerState<CameraView> {
   bool _isCountDownTimerStart = false;
   bool _isRecordTimerStart = false;
 
-  PoseLandmark? p1;
-  PoseLandmark? p2;
-  PoseLandmark? p3;
-  PoseLandmark? p4;
-  PoseLandmark? p5;
-  PoseLandmark? p6;
+  PoseLandmark? rtShoulder;
+  PoseLandmark? rtElbow;
+  PoseLandmark? rtWrist;
+  PoseLandmark? rtHip;
+  PoseLandmark? rtKnee;
+  PoseLandmark? rtAnkle;
+  PoseLandmark? ltShoulder;
+  PoseLandmark? ltElbow;
+  PoseLandmark? ltWrist;
+  PoseLandmark? ltHip;
+  PoseLandmark? ltKnee;
+  PoseLandmark? ltAnkle;
+
   Timer? _timer;
   Timer? _countdownTimer;
   Timer? _recordTimer;
@@ -108,20 +116,36 @@ class _CameraViewState extends ConsumerState<CameraView> {
             leftSHK: 0,
             leftHKA: 0,
             durationTime: ''),
-        recordTime: '');
-    if (p1 != null &&
-        p2 != null &&
-        p3 != null &&
-        p4 != null &&
-        p5 != null &&
-        p6 != null) {
-      final rtaAngle = utils.angle(p1!, p2!, p3!);
-      final ltaAngle = utils.angle(p4!, p5!, p6!);
+        recordTime: '',
+        rtShoulder: CoordinateLandmark(
+            x: rtShoulder!.x, y: rtShoulder!.y, z: rtShoulder!.z),
+        rtElbow:
+            CoordinateLandmark(x: rtElbow!.x, y: rtElbow!.y, z: rtElbow!.z),
+        rtWrist:
+            CoordinateLandmark(x: rtWrist!.x, y: rtWrist!.y, z: rtWrist!.z),
+        rtHip: CoordinateLandmark(x: rtHip!.x, y: rtHip!.y, z: rtHip!.z),
+        rtKnee: CoordinateLandmark(x: rtKnee!.x, y: rtKnee!.y, z: rtKnee!.z),
+        rtAnkle:
+            CoordinateLandmark(x: rtAnkle!.x, y: rtAnkle!.y, z: rtAnkle!.z),
+        ltShoulder: CoordinateLandmark(
+            x: ltShoulder!.x, y: ltShoulder!.y, z: ltShoulder!.z),
+        ltElbow:
+            CoordinateLandmark(x: ltElbow!.x, y: ltElbow!.y, z: ltElbow!.z),
+        ltWrist:
+            CoordinateLandmark(x: ltWrist!.x, y: ltWrist!.y, z: ltWrist!.z),
+        ltHip: CoordinateLandmark(x: ltHip!.x, y: ltHip!.y, z: ltHip!.z),
+        ltKnee: CoordinateLandmark(x: ltKnee!.x, y: ltKnee!.y, z: ltKnee!.z),
+        ltAnkle:
+            CoordinateLandmark(x: ltAnkle!.x, y: ltAnkle!.y, z: ltAnkle!.z));
+    if (rtShoulder != null &&
+        rtElbow != null &&
+        rtWrist != null &&
+        ltShoulder != null &&
+        ltElbow != null &&
+        ltWrist != null) {
       final elapsedTime = DateTime.now().difference(startTime);
       exerciseData.count = ref.read(pushUpCounterProvider.notifier).counter;
       exerciseData.poseState = ref.read(pushUpCounterProvider).name;
-      exerciseData.angles.rightWES = rtaAngle.roundToDouble();
-      exerciseData.angles.leftWES = ltaAngle.roundToDouble();
       exerciseData.angles.durationTime =
           (elapsedTime.inMilliseconds / 1000).toStringAsFixed(2);
       String formattedDateTime =
@@ -141,44 +165,59 @@ class _CameraViewState extends ConsumerState<CameraView> {
           return joint1;
         }
 
-        p1 = getPoseLandmark(PoseLandmarkType.rightShoulder);
-        p2 = getPoseLandmark(PoseLandmarkType.rightElbow);
-        p3 = getPoseLandmark(PoseLandmarkType.rightWrist);
-        p4 = getPoseLandmark(PoseLandmarkType.leftShoulder);
-        p5 = getPoseLandmark(PoseLandmarkType.leftElbow);
-        p6 = getPoseLandmark(PoseLandmarkType.leftWrist);
+        rtShoulder = getPoseLandmark(PoseLandmarkType.rightShoulder);
+        rtElbow = getPoseLandmark(PoseLandmarkType.rightElbow);
+        rtWrist = getPoseLandmark(PoseLandmarkType.rightWrist);
+        rtHip = getPoseLandmark(PoseLandmarkType.rightHip);
+        rtKnee = getPoseLandmark(PoseLandmarkType.rightKnee);
+        rtAnkle = getPoseLandmark(PoseLandmarkType.rightAnkle);
+        ltShoulder = getPoseLandmark(PoseLandmarkType.leftShoulder);
+        ltElbow = getPoseLandmark(PoseLandmarkType.leftElbow);
+        ltWrist = getPoseLandmark(PoseLandmarkType.leftWrist);
+        ltHip = getPoseLandmark(PoseLandmarkType.leftHip);
+        ltKnee = getPoseLandmark(PoseLandmarkType.leftKnee);
+        ltAnkle = getPoseLandmark(PoseLandmarkType.leftAnkle);
       }
       //verification
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (p1 != null &&
-            p2 != null &&
-            p3 != null &&
-            p4 != null &&
-            p5 != null &&
-            p6 != null) {
-          final rtaAngle = utils.angle(p1!, p2!, p3!);
-          final ltaAngle = utils.angle(p4!, p5!, p6!);
-          final rta =
-              utils.isPushUp(rtaAngle, ref.watch(pushUpCounterProvider));
-          final lta =
-              utils.isPushUp(ltaAngle, ref.watch(pushUpCounterProvider));
-          // If both arms satisfy push-up conditions
-          if (rta != null && lta != null) {
-            if (rta == PushUpState.init && lta == PushUpState.init) {
-              ref.read(pushUpCounterProvider.notifier).setPushUpState(
-                  rta); // Assuming rta and lta have the same state
-            } else if (rta == PushUpState.pushDown &&
-                lta == PushUpState.pushDown) {
-              ref.read(pushUpCounterProvider.notifier).setPushUpState(rta);
-            } else if (rta == PushUpState.complete &&
-                lta == PushUpState.complete) {
-              //_saveImage(currentCameraImage!.bytes);
-              ref.read(pushUpCounterProvider.notifier).increment();
-              ref
-                  .read(pushUpCounterProvider.notifier)
-                  .setPushUpState(PushUpState.pushUp); // Reset to neutral state
-            }
-          }
+        final exerciseVerification = ExerciseVerification(ref);
+        if (rtShoulder != null &&
+            rtElbow != null &&
+            rtWrist != null &&
+            ltShoulder != null &&
+            ltElbow != null &&
+            ltWrist != null) {
+          exerciseVerification.ArmsUp(
+              rtShoulder!, rtElbow!, rtWrist!, ltShoulder!, ltElbow!, ltWrist!);
+          //   final rtaAngle = utils.angle(
+          //       CoordinateLandmark.fromPoseLandMark(rtShoulder!),
+          //       CoordinateLandmark.fromPoseLandMark(rtElbow!),
+          //       CoordinateLandmark.fromPoseLandMark(rtWrist!));
+          //   final ltaAngle = utils.angle(
+          //       CoordinateLandmark.fromPoseLandMark(ltShoulder!),
+          //       CoordinateLandmark.fromPoseLandMark(ltElbow!),
+          //       CoordinateLandmark.fromPoseLandMark(ltWrist!));
+          //   final rta =
+          //       utils.isPushUp(rtaAngle, ref.watch(pushUpCounterProvider));
+          //   final lta =
+          //       utils.isPushUp(ltaAngle, ref.watch(pushUpCounterProvider));
+          //   // If both arms satisfy push-up conditions
+          //   if (rta != null && lta != null) {
+          //     if (rta == PushUpState.init && lta == PushUpState.init) {
+          //       ref.read(pushUpCounterProvider.notifier).setPushUpState(
+          //           rta); // Assuming rta and lta have the same state
+          //     } else if (rta == PushUpState.ArmsDown &&
+          //         lta == PushUpState.ArmsDown) {
+          //       ref.read(pushUpCounterProvider.notifier).setPushUpState(rta);
+          //     } else if (rta == PushUpState.complete &&
+          //         lta == PushUpState.complete) {
+          //       //_saveImage(currentCameraImage!.bytes);
+          //       ref.read(pushUpCounterProvider.notifier).increment();
+          //       ref
+          //           .read(pushUpCounterProvider.notifier)
+          //           .setPushUpState(PushUpState.ArmsUp); // Reset to neutral state
+          //     }
+          //   }
         }
       });
     }
@@ -724,7 +763,9 @@ class _CameraViewState extends ConsumerState<CameraView> {
       currentList.add(exerciseDataListJson);
       await box.put('pushupData', currentList);
 
+      // ignore: unused_result
       ref.refresh(exerciseDataProvider);
+      // ignore: unused_result
       ref.refresh(stdExerciseDataProvider);
     } else {
       var videoFile = await _controller!.stopVideoRecording();
