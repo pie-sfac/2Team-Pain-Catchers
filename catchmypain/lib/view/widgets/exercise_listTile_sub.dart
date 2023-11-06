@@ -1,6 +1,6 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:catchmypain/model/exercisedata.dart';
 import 'package:flutter/material.dart';
+import 'package:catchmypain/util/utils.dart' as utils;
 
 class ExerciseListTileSub extends StatelessWidget {
   const ExerciseListTileSub({
@@ -68,14 +68,54 @@ class ExerciseListTileSub extends StatelessWidget {
                                 color: Colors.black, fontSize: 20)),
                         Text(exerciseDataList[i].poseState),
                         Text(exerciseDataList[i].angles.durationTime),
-                        Text('${exerciseDataList[i].angles.leftWES}'),
-                        Text('${exerciseDataList[i].angles.rightWES}'),
-                        Text('${exerciseDataList[i].angles.leftESH}'),
-                        Text('${exerciseDataList[i].angles.rightESH}'),
-                        Text('${exerciseDataList[i].angles.leftSHK}'),
-                        Text('${exerciseDataList[i].angles.rightSHK}'),
-                        Text('${exerciseDataList[i].angles.leftHKA}'),
-                        Text('${exerciseDataList[i].angles.rightHKA}'),
+                        Text(utils
+                            .angle(
+                                exerciseDataList[i].ltShoulder,
+                                exerciseDataList[i].ltElbow,
+                                exerciseDataList[i].ltWrist)
+                            .toStringAsFixed(1)),
+                        Text(utils
+                            .angle(
+                                exerciseDataList[i].rtShoulder,
+                                exerciseDataList[i].rtElbow,
+                                exerciseDataList[i].rtWrist)
+                            .toStringAsFixed(1)),
+                        Text(utils
+                            .angle(
+                                exerciseDataList[i].ltElbow,
+                                exerciseDataList[i].ltShoulder,
+                                exerciseDataList[i].ltHip)
+                            .toStringAsFixed(1)),
+                        Text(utils
+                            .angle(
+                                exerciseDataList[i].rtElbow,
+                                exerciseDataList[i].rtShoulder,
+                                exerciseDataList[i].rtHip)
+                            .toStringAsFixed(1)),
+                        Text(utils
+                            .angle(
+                                exerciseDataList[i].ltShoulder,
+                                exerciseDataList[i].ltHip,
+                                exerciseDataList[i].ltKnee)
+                            .toStringAsFixed(1)),
+                        Text(utils
+                            .angle(
+                                exerciseDataList[i].rtShoulder,
+                                exerciseDataList[i].rtHip,
+                                exerciseDataList[i].rtKnee)
+                            .toStringAsFixed(1)),
+                        Text(utils
+                            .angle(
+                                exerciseDataList[i].ltHip,
+                                exerciseDataList[i].ltKnee,
+                                exerciseDataList[i].ltAnkle)
+                            .toStringAsFixed(1)),
+                        Text(utils
+                            .angle(
+                                exerciseDataList[i].rtHip,
+                                exerciseDataList[i].rtKnee,
+                                exerciseDataList[i].rtAnkle)
+                            .toStringAsFixed(1)),
                       ],
                     ),
                   ],

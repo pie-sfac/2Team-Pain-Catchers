@@ -6,7 +6,7 @@ class ExerciseListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<String> exerciseList = ['push_up', 'squat', 'arm_press'];
+    List<String> exerciseList = ['arm_press'];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
