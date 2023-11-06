@@ -55,6 +55,10 @@ class DrawingCanvas extends ConsumerWidget {
             color: selectedColor,
             size: strokeSize,
             mode: drawingMode);
+
+        if (ref.read(stackProvider).isNotEmpty) {       //모르겠당... 
+          ref.read(stackProvider.notifier).state = List<Sketch>.from([]);
+        }
       },
       onPointerMove: (details) {
         final box = context.findRenderObject() as RenderBox;
@@ -69,6 +73,8 @@ class DrawingCanvas extends ConsumerWidget {
             mode: drawingMode);
       },
       onPointerUp: (details) {
+               // 이거 맞나
+
         if (currentSketch != null) {
           ref.read(sketchesProvider.notifier).state =
               List<Sketch>.from(allSketches)..add(currentSketch!);
@@ -140,10 +146,7 @@ class SketchPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant SketchPainter oldDelegate) {
-    //  if(oldDelegate.sketches != sketches) {
-    //   return true;
-    //  }
-    //  return false;
+    // return oldDelegate.sketches != sketches;
     return true;
   }
 }
