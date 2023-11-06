@@ -6,6 +6,7 @@ import 'package:catchmypain/view/page/report_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+// ignore: must_be_immutable
 class MainPage extends ConsumerWidget {
   MainPage({super.key});
 

@@ -1,17 +1,42 @@
 import 'dart:convert';
 
+import 'package:google_ml_kit/google_ml_kit.dart';
+
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 class ExerciseData {
   int count;
   String poseState;
   Angles angles;
   String recordTime;
-
+  CoordinateLandmark rtShoulder;
+  CoordinateLandmark rtElbow;
+  CoordinateLandmark rtWrist;
+  CoordinateLandmark rtHip;
+  CoordinateLandmark rtKnee;
+  CoordinateLandmark rtAnkle;
+  CoordinateLandmark ltShoulder;
+  CoordinateLandmark ltElbow;
+  CoordinateLandmark ltWrist;
+  CoordinateLandmark ltHip;
+  CoordinateLandmark ltKnee;
+  CoordinateLandmark ltAnkle;
   ExerciseData({
     required this.count,
     required this.poseState,
     required this.angles,
     required this.recordTime,
+    required this.rtShoulder,
+    required this.rtElbow,
+    required this.rtWrist,
+    required this.rtHip,
+    required this.rtKnee,
+    required this.rtAnkle,
+    required this.ltShoulder,
+    required this.ltElbow,
+    required this.ltWrist,
+    required this.ltHip,
+    required this.ltKnee,
+    required this.ltAnkle,
   });
 
   Map<String, dynamic> toMap() {
@@ -20,6 +45,18 @@ class ExerciseData {
       'poseState': poseState,
       'angles': angles.toMap(),
       'recordTime': recordTime,
+      'rtShoulder': rtShoulder.toMap(),
+      'rtElbow': rtElbow.toMap(),
+      'rtWrist': rtWrist.toMap(),
+      'rtHip': rtHip.toMap(),
+      'rtKnee': rtKnee.toMap(),
+      'rtAnkle': rtAnkle.toMap(),
+      'ltShoulder': ltShoulder.toMap(),
+      'ltElbow': ltElbow.toMap(),
+      'ltWrist': ltWrist.toMap(),
+      'ltHip': ltHip.toMap(),
+      'ltKnee': ltKnee.toMap(),
+      'ltAnkle': ltAnkle.toMap(),
     };
   }
 
@@ -29,6 +66,26 @@ class ExerciseData {
       poseState: map['poseState'] as String,
       angles: Angles.fromMap(map['angles'] as Map<String, dynamic>),
       recordTime: map['recordTime'] as String,
+      rtShoulder:
+          CoordinateLandmark.fromMap(map['rtShoulder'] as Map<String, dynamic>),
+      rtElbow:
+          CoordinateLandmark.fromMap(map['rtElbow'] as Map<String, dynamic>),
+      rtWrist:
+          CoordinateLandmark.fromMap(map['rtWrist'] as Map<String, dynamic>),
+      rtHip: CoordinateLandmark.fromMap(map['rtHip'] as Map<String, dynamic>),
+      rtKnee: CoordinateLandmark.fromMap(map['rtKnee'] as Map<String, dynamic>),
+      rtAnkle:
+          CoordinateLandmark.fromMap(map['rtAnkle'] as Map<String, dynamic>),
+      ltShoulder:
+          CoordinateLandmark.fromMap(map['ltShoulder'] as Map<String, dynamic>),
+      ltElbow:
+          CoordinateLandmark.fromMap(map['ltElbow'] as Map<String, dynamic>),
+      ltWrist:
+          CoordinateLandmark.fromMap(map['ltWrist'] as Map<String, dynamic>),
+      ltHip: CoordinateLandmark.fromMap(map['ltHip'] as Map<String, dynamic>),
+      ltKnee: CoordinateLandmark.fromMap(map['ltKnee'] as Map<String, dynamic>),
+      ltAnkle:
+          CoordinateLandmark.fromMap(map['ltAnkle'] as Map<String, dynamic>),
     );
   }
 
@@ -100,4 +157,44 @@ class Angles {
 
   factory Angles.fromJson(String source) =>
       Angles.fromMap(json.decode(source) as Map<String, dynamic>);
+}
+
+class CoordinateLandmark {
+  double x;
+  double y;
+  double z;
+  CoordinateLandmark({
+    required this.x,
+    required this.y,
+    required this.z,
+  });
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'x': x,
+      'y': y,
+      'z': z,
+    };
+  }
+
+  factory CoordinateLandmark.fromMap(Map<String, dynamic> map) {
+    return CoordinateLandmark(
+      x: map['x'] as double,
+      y: map['y'] as double,
+      z: map['z'] as double,
+    );
+  }
+
+  String toJson() => json.encode(toMap());
+
+  factory CoordinateLandmark.fromPoseLandMark(PoseLandmark value) {
+    return CoordinateLandmark(
+      x: value.x,
+      y: value.y,
+      z: value.z,
+    );
+  }
+
+  factory CoordinateLandmark.fromJson(String source) =>
+      CoordinateLandmark.fromMap(json.decode(source) as Map<String, dynamic>);
 }

@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 enum PushUpState {
   neutral,
   init,
-  pushUp,
-  pushDown,
+  ArmsUp,
+  ArmsDown,
   complete,
 }
 
@@ -14,7 +14,7 @@ final pushUpCounterProvider =
 });
 
 class PushUpCounter extends StateNotifier<PushUpState> {
-  PushUpCounter() : super(PushUpState.pushUp);
+  PushUpCounter() : super(PushUpState.init);
   int counter = 0;
 
   void setPushUpState(PushUpState current) {
