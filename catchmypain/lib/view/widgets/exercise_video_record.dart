@@ -52,8 +52,8 @@ class _ExerciseVideoRecordWidgetState extends State<ExerciseVideoRecordWidget> {
                 textAlign: TextAlign.left,
               ),
               GridView.builder(
-                shrinkWrap: true, // 뷰를 자식 요소들의 크기에 맞춤
-                physics: const ScrollPhysics(), // 부모 스크롤에 따라 함께 스크롤
+                shrinkWrap: true,
+                physics: const ScrollPhysics(),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 5,
                   crossAxisSpacing: 20,
