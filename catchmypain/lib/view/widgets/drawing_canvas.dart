@@ -56,7 +56,8 @@ class DrawingCanvas extends ConsumerWidget {
             size: strokeSize,
             mode: drawingMode);
 
-        if (ref.read(stackProvider).isNotEmpty) {       //모르겠당... 
+        if (ref.read(stackProvider).isNotEmpty) {
+          //모르겠당...
           ref.read(stackProvider.notifier).state = List<Sketch>.from([]);
         }
       },
@@ -73,7 +74,7 @@ class DrawingCanvas extends ConsumerWidget {
             mode: drawingMode);
       },
       onPointerUp: (details) {
-               // 이거 맞나
+        // 이거 맞나
 
         if (currentSketch != null) {
           ref.read(sketchesProvider.notifier).state =
@@ -113,33 +114,33 @@ class SketchPainter extends CustomPainter {
       final points = sketch.points;
 
       final path = Path();
-      path.moveTo(points.first.dx, points.first.dy);
+      if (points.isNotEmpty) {
+        path.moveTo(points.first.dx, points.first.dy);
+        for (int i = 1; i < points.length - 1; i++) {
+          final p0 = points[i];
+          final p1 = points[i + 1];
+          path.quadraticBezierTo(
+              p0.dx, p0.dy, (p0.dx + p1.dx) / 2, (p0.dy + p1.dy) / 2); // 이기 뭐꼬
+        }
+        Paint paint = Paint()
+          ..color = sketch.color
+          ..strokeWidth = sketch.size
+          ..strokeCap = StrokeCap.round
+          ..style = PaintingStyle.stroke;
 
-      for (int i = 1; i < points.length - 1; i++) {
-        final p0 = points[i];
-        final p1 = points[i + 1];
-        path.quadraticBezierTo(
-            p0.dx, p0.dy, (p0.dx + p1.dx) / 2, (p0.dy + p1.dy) / 2); // 이기 뭐꼬
-      }
+        Offset firstPoint = sketch.points.first;
+        Offset lastPoint = sketch.points.last;
+        Rect rect = Rect.fromPoints(firstPoint, lastPoint);
 
-      Paint paint = Paint()
-        ..color = sketch.color
-        ..strokeWidth = sketch.size
-        ..strokeCap = StrokeCap.round
-        ..style = PaintingStyle.stroke;
-
-      Offset firstPoint = sketch.points.first;
-      Offset lastPoint = sketch.points.last;
-      Rect rect = Rect.fromPoints(firstPoint, lastPoint);
-
-      if (sketch.mode == DrawingMode.pencil) {
-        canvas.drawPath(path, paint);
-      } else if (sketch.mode == DrawingMode.line) {
-        canvas.drawLine(firstPoint, lastPoint, paint);
-      } else if (sketch.mode == DrawingMode.circle) {
-        canvas.drawOval(rect, paint);
-      } else if (sketch.mode == DrawingMode.rect) {
-        canvas.drawRect(rect, paint);
+        if (sketch.mode == DrawingMode.pencil) {
+          canvas.drawPath(path, paint);
+        } else if (sketch.mode == DrawingMode.line) {
+          canvas.drawLine(firstPoint, lastPoint, paint);
+        } else if (sketch.mode == DrawingMode.circle) {
+          canvas.drawOval(rect, paint);
+        } else if (sketch.mode == DrawingMode.rect) {
+          canvas.drawRect(rect, paint);
+        }
       }
     }
   }
