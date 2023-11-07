@@ -2,6 +2,7 @@ import 'package:catchmypain/model/condition_model.dart';
 import 'package:catchmypain/model/exercisedata.dart';
 import 'package:catchmypain/model/painHistory_model.dart';
 import 'package:flutter/material.dart';
+import 'package:catchmypain/util/utils.dart' as utils;
 
 class FilledBelowCurvedPainter extends CustomPainter {
   final List<dynamic> chartData;
@@ -15,9 +16,12 @@ class FilledBelowCurvedPainter extends CustomPainter {
     'GOOD': 4,
     'VERY_GOOD': 5
   };
+  int dataNum;
+  bool filledCheck;
+  bool lineCheck;
 
-  FilledBelowCurvedPainter(
-      this.chartData, this.levelLenth, this.reversedList, this.iconSize);
+  FilledBelowCurvedPainter(this.chartData, this.levelLenth, this.reversedList,
+      this.iconSize, this.dataNum, this.filledCheck, this.lineCheck);
 
   //level 반환 : painHistory data
   //condition 반환 : condition data
@@ -46,7 +50,7 @@ class FilledBelowCurvedPainter extends CustomPainter {
 
     String keyData = chartData.isNotEmpty ? checkData(chartData) : '';
     Path path = Path();
-    Path fillPath = Path();
+    Path? fillPath = filledCheck ? Path() : null;
 
     switch (keyData) {
       //painHistory data
@@ -54,46 +58,64 @@ class FilledBelowCurvedPainter extends CustomPainter {
         var interHeight = (reversedList![0] - reversedList![1]);
         var level = chartData[0] is PainHistoryModel
             ? chartData[0].level.toDouble()
-            : chartData[0].angles.leftWES.toDouble();
+            : double.parse(utils
+                .angle(chartData[0].ltShoulder, chartData[0].ltElbow,
+                    chartData[0].ltWrist)
+                .toStringAsFixed(1));
         if (chartData.length > 1) {
-          double startX = (size.width / chartData.take(5).length) * 0 +
-              (size.width / chartData.take(5).length) / 2;
+          double startX = (size.width / chartData.take(dataNum).length) * 0 +
+              (size.width / chartData.take(dataNum).length) / 2;
           double startY = size.height -
               size.height /
                   (reversedList!.first - (reversedList!.last - interHeight)) *
                   (level - (reversedList!.last - interHeight)) +
               iconSize / 2;
 
-          fillPath.moveTo(startX, size.height);
-          fillPath.lineTo(startX, startY);
+          fillPath?.moveTo(startX, size.height);
+          fillPath?.lineTo(startX, startY);
           path.moveTo(startX, startY);
 
-          for (int i = 0; i < chartData.take(5).length - 1; i++) {
-            double endX = (size.width / chartData.take(5).length) * (i + 1) +
-                (size.width / chartData.take(5).length) / 2;
+          for (int i = 0; i < chartData.take(dataNum).length - 1; i++) {
+            double endX =
+                (size.width / chartData.take(dataNum).length) * (i + 1) +
+                    (size.width / chartData.take(dataNum).length) / 2;
             double endY = size.height -
                 size.height /
                     (reversedList!.first - (reversedList!.last - interHeight)) *
                     (chartData[0] is PainHistoryModel
                         ? chartData[i + 1].level.toDouble()
-                        : chartData[i + 1].angles.leftWES.toDouble() -
+                        : double.parse(utils
+                                .angle(
+                                    chartData[i + 1].ltShoulder,
+                                    chartData[i + 1].ltElbow,
+                                    chartData[i + 1].ltWrist)
+                                .toStringAsFixed(1)) -
                             (reversedList!.last - interHeight)) +
                 iconSize / 2;
 
-            double midX = (startX + endX) / 2;
-            path.quadraticBezierTo(
-                midX, i % 2 == 0 ? startY : endY, endX, endY);
-            fillPath.quadraticBezierTo(
-                midX, i % 2 == 0 ? startY : endY, endX, endY);
+            if (lineCheck) {
+              path.lineTo(endX, endY);
+              fillPath?.lineTo(endX, endY);
+            } else {
+              double midX = (startX + endX) / 2;
+
+              path.quadraticBezierTo(
+                  midX, i % 2 == 0 ? startY : endY, endX, endY);
+              fillPath?.quadraticBezierTo(
+                  midX, i % 2 == 0 ? startY : endY, endX, endY);
+            }
 
             startX = endX;
             startY = endY;
           }
 
-          fillPath.lineTo(startX, size.height);
-          fillPath.close();
+          fillPath?.lineTo(startX, size.height);
+          fillPath?.close();
         }
-        canvas.drawPath(fillPath, fillPaint);
+        if (fillPath != null) {
+          canvas.drawPath(fillPath, fillPaint);
+        }
+
         canvas.drawPath(path, strokePaint);
         break;
 
@@ -107,8 +129,8 @@ class FilledBelowCurvedPainter extends CustomPainter {
                   (size.height / levelLenth)) +
               (size.height / levelLenth) / 2;
 
-          fillPath.moveTo(startX, size.height);
-          fillPath.lineTo(startX, startY);
+          fillPath?.moveTo(startX, size.height);
+          fillPath?.lineTo(startX, startY);
           path.moveTo(startX, startY);
 
           for (int i = 0; i < chartData.length - 1; i++) {
@@ -119,20 +141,28 @@ class FilledBelowCurvedPainter extends CustomPainter {
                     (size.height / levelLenth)) +
                 (size.height / levelLenth) / 2;
 
-            double midX = (startX + endX) / 2;
-            path.quadraticBezierTo(
-                midX, i % 2 == 0 ? startY : endY, endX, endY);
-            fillPath.quadraticBezierTo(
-                midX, i % 2 == 0 ? startY : endY, endX, endY);
+            if (lineCheck) {
+              path.lineTo(endX, endY);
+              fillPath?.lineTo(endX, endY);
+            } else {
+              double midX = (startX + endX) / 2;
+              path.quadraticBezierTo(
+                  midX, i % 2 == 0 ? startY : endY, endX, endY);
+              fillPath?.quadraticBezierTo(
+                  midX, i % 2 == 0 ? startY : endY, endX, endY);
+            }
 
             startX = endX;
             startY = endY;
           }
 
-          fillPath.lineTo(startX, size.height);
-          fillPath.close();
+          fillPath?.lineTo(startX, size.height);
+          fillPath?.close();
         }
-        canvas.drawPath(fillPath, fillPaint);
+        if (fillPath != null) {
+          canvas.drawPath(fillPath, fillPaint);
+        }
+
         canvas.drawPath(path, strokePaint);
         break;
     }

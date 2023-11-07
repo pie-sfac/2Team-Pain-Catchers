@@ -1,5 +1,6 @@
 import 'package:catchmypain/model/exercisedata.dart';
 import 'package:catchmypain/model/painHistory_model.dart';
+import 'package:catchmypain/util/utils.dart' as utils;
 
 class YRange {
   double _minLevel = 0;
@@ -36,21 +37,29 @@ class YRange {
     return _reversed_Levels;
   }
 
-  findMinMaxExer(List<ExerciseData> history) {
-    if (history.isEmpty) {
+  findMinMaxExer(List<dynamic> exerciseDataList, int dataNum) {
+    if (exerciseDataList.isEmpty) {
       return null;
     }
 
-    _minLevel = history[0].angles.leftWES.toDouble();
-    _maxLevel = history[0].angles.leftWES.toDouble();
+    _minLevel = double.parse(utils
+        .angle(exerciseDataList[0].ltShoulder, exerciseDataList[0].ltElbow,
+            exerciseDataList[0].ltWrist)
+        .toStringAsFixed(1));
+    _maxLevel = double.parse(utils
+        .angle(exerciseDataList[0].ltShoulder, exerciseDataList[0].ltElbow,
+            exerciseDataList[0].ltWrist)
+        .toStringAsFixed(1));
 
-    for (var entry in history.take(6)) {
-      double level = entry.angles.leftWES;
-      if (level < _minLevel) {
-        _minLevel = level.toDouble();
+    for (var entry in exerciseDataList.take(dataNum)) {
+      double angle = double.parse(utils
+          .angle(entry.ltShoulder, entry.ltElbow, entry.ltWrist)
+          .toStringAsFixed(1));
+      if (angle < _minLevel) {
+        _minLevel = angle.toDouble();
       }
-      if (level > _maxLevel) {
-        _maxLevel = level.toDouble();
+      if (angle > _maxLevel) {
+        _maxLevel = angle.toDouble();
       }
     }
     print(_minLevel);

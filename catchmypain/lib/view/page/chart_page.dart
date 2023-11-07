@@ -5,6 +5,7 @@ import 'package:catchmypain/model/exercisedata.dart';
 import 'package:catchmypain/model/painHistory_model.dart';
 import 'package:catchmypain/provider/api_provider.dart';
 import 'package:catchmypain/provider/checkbox_lebel.dart';
+import 'package:catchmypain/provider/exercise_record_provider.dart';
 import 'package:catchmypain/provider/page_provider.dart';
 import 'package:catchmypain/provider/read_file_provider.dart';
 import 'package:catchmypain/view/widgets/chart_widget.dart';
@@ -51,11 +52,16 @@ class _ChartPageState extends ConsumerState<ChartPage> {
   double maxLevel = 0;
   List<double> levels = []; //y축 범위
   List<double> reversedLevels = [];
+  int dataNum = 10; //가져온 운동데이터 사용 개수
 
   void _handleTextChange(String value) {
     setState(() {
       fontSize = value.isNotEmpty ? double.parse(value) : 15;
-      iconSize = TextSizeControl().iconSize(usedData[0].date, value);
+      iconSize = TextSizeControl().iconSize(
+          usedData[0] is ExerciseData
+              ? usedData[0].durationTime
+              : usedData[0].date,
+          value);
       sizedBoxWidth = usedData[0] is PainHistoryModel
           ? TextSizeControl()
                   .textSize(reversedLevels[0].toString(),
@@ -74,10 +80,22 @@ class _ChartPageState extends ConsumerState<ChartPage> {
     final reportDataAsyncValue = ref.watch(
         reportProvider(uuid)); // 여기서 report의 타입은 AsyncValue<ApiResponse> 입니다.
     //로컬데이터 읽어옴
-    AsyncValue<List<ExerciseData>> fileContent = ref.watch(fileContentProvider);
+    // AsyncValue<List<ExerciseData>> fileContent = ref.watch(fileContentProvider);
+    //hive 데이터베이스
+    //운동 영상 모든 데이터
+    AsyncValue<List<ExerciseData>> exerciseDataAsyncValue =
+        ref.watch(exerciseDataProvider);
+    //각 운동 영상 기록의 마지막 데이터의 리스트
+    AsyncValue<List<ExerciseData>> stdExerciseDataAsyncValue =
+        ref.watch(stdExerciseDataProvider);
+
     print('reportDataAsyncValue: ${reportDataAsyncValue.value}');
-    print('fileContent: ${fileContent.value}');
-    final checkboxState = ref.watch(checkboxProvider);
+    print('exerciseDataAsyncValue: ${exerciseDataAsyncValue.value}');
+    print(
+        'stdExerciseDataAsyncValue: ${stdExerciseDataAsyncValue.value!.first.durationTime}');
+    bool labelCheckboxState = ref.watch(checkboxProvider);
+    bool filledCheckboxState = ref.watch(filledProvider);
+    bool lineCheckboxState = ref.watch(lineProvider);
 
     double containerWidth = MediaQuery.of(context).size.width * 0.8;
     double containerHeight = MediaQuery.of(context).size.height * 0.7;
@@ -145,7 +163,9 @@ class _ChartPageState extends ConsumerState<ChartPage> {
                             usedData: usedData,
                             containerWidth: containerWidth,
                             containerHeight: containerHeight,
-                            labelCheck: checkboxState.labelCheck,
+                            labelCheck: labelCheckboxState,
+                            filledCheck: filledCheckboxState,
+                            lineCheck: lineCheckboxState,
                             yLength: [0, 2].contains(chartIndex)
                                 ? reversedLevels.length.toDouble()
                                 : moods.length.toDouble(),
@@ -154,12 +174,13 @@ class _ChartPageState extends ConsumerState<ChartPage> {
                                 : null,
                             moodsToInt:
                                 [0, 2].contains(chartIndex) ? null : moodsToInt,
+                            dataNum: dataNum,
                           ),
                           //글자 크기, 라벨 설정
                           Container(
                               padding: const EdgeInsets.only(left: 8),
                               width: fontSizeContainerWidth,
-                              height: 100,
+                              height: 230,
                               child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -183,17 +204,48 @@ class _ChartPageState extends ConsumerState<ChartPage> {
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
                                           Checkbox(
-                                            value: checkboxState.labelCheck,
+                                            value: labelCheckboxState,
                                             onChanged: (bool? value) {
                                               if (value != null) {
                                                 ref
                                                     .read(checkboxProvider
                                                         .notifier)
-                                                    .setLabelCheck(value);
+                                                    .state = value;
                                               }
                                             },
                                           ),
                                           Text('라벨표시')
+                                        ]),
+                                    Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Checkbox(
+                                            value: filledCheckboxState,
+                                            onChanged: (bool? value) {
+                                              if (value != null) {
+                                                ref
+                                                    .read(
+                                                        filledProvider.notifier)
+                                                    .state = value;
+                                              }
+                                            },
+                                          ),
+                                          Text('선밑 색')
+                                        ]),
+                                    Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Checkbox(
+                                            value: lineCheckboxState,
+                                            onChanged: (bool? value) {
+                                              if (value != null) {
+                                                ref
+                                                    .read(lineProvider.notifier)
+                                                    .state = value;
+                                              }
+                                            },
+                                          ),
+                                          Text('직선')
                                         ]),
                                   ]))
                         ]),
@@ -205,13 +257,15 @@ class _ChartPageState extends ConsumerState<ChartPage> {
                             width: containerWidth + fontSizeContainerWidth,
                             child: ListView.builder(
                               scrollDirection: Axis.horizontal,
-                              itemExtent: (containerWidth) / 5,
-                              itemCount: 5,
+                              itemExtent: (containerWidth) /
+                                  (chartIndex == 2 ? dataNum : usedData.length),
+                              itemCount:
+                                  chartIndex == 2 ? dataNum : usedData.length,
                               itemBuilder: (context, index) => Center(
                                   child: Text(
                                 chartIndex < 2
                                     ? usedData[index].date
-                                    : usedData[index].angles.durationTime,
+                                    : usedData[index].durationTime,
                                 style: TextStyle(fontSize: fontSize),
                               )),
                             )))
@@ -240,23 +294,28 @@ class _ChartPageState extends ConsumerState<ChartPage> {
             );
           });
     } else {
-      return fileContent.when(
+      return exerciseDataAsyncValue.when(
           loading: () => CircularProgressIndicator(), // 로딩 중 상태 UI
           error: (error, stack) => Text('Error: $error'), // 에러 상태 UI
-          data: (report) {
-            usedData = report;
-            print('usedData[0].angle : ${usedData[0].angles.durationTime}');
-            if (report.length != 0) {
-              //범례 범위 리스트(역순)
-              reversedLevels = YRange().findMinMaxExer(report);
-              print('reversedLevels : ${reversedLevels}');
-              return dataWidget();
-            }
-            return Center(
-              child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [Text('No Data')]),
-            );
+          data: (exerciseDataList) {
+            return stdExerciseDataAsyncValue.when(
+                loading: () => CircularProgressIndicator(), // 로딩 중 상태 UI
+                error: (error, stack) => Text('Error: $error'), // 에러 상태 UI
+                data: (stdExerciseDataList) {
+                  usedData = exerciseDataList;
+
+                  if (usedData.length != 0) {
+                    //범례 범위 리스트(역순)
+                    reversedLevels = YRange().findMinMaxExer(usedData, dataNum);
+                    print('reversedLevels : ${reversedLevels}');
+                    return dataWidget();
+                  }
+                  return Center(
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [Text('No Data')]),
+                  );
+                });
           });
     }
   }
