@@ -2,6 +2,7 @@ import 'package:catchmypain/view/widgets/report_view_widgets/advertisement_widge
 import 'package:catchmypain/view/widgets/report_view_widgets/center_recommend_widget.dart';
 import 'package:catchmypain/view/widgets/report_view_widgets/condition_change_widget.dart';
 import 'package:catchmypain/view/widgets/report_view_widgets/feedback_list_widget.dart';
+import 'package:catchmypain/view/widgets/report_view_widgets/footer_widget.dart';
 import 'package:catchmypain/view/widgets/report_view_widgets/head_title.dart';
 import 'package:catchmypain/view/widgets/report_view_widgets/image_list_widget.dart';
 import 'package:catchmypain/view/widgets/report_view_widgets/pain_change_widget.dart';
@@ -16,17 +17,20 @@ class ReportPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: ListView(
-        children: [
-          const HeadTitleWidget(),
-          const AdvertisementWidget(),
-          const ImageListWidget(),
-          const SizedBox(height: 20),
+        children: const [
+          HeadTitleWidget(),
+          AdvertisementWidget(),
+          ImageListWidget(),
+          SizedBox(height: 20),
           FeedBackListWidget(),
-          const SizedBox(height: 10),
-          const CenterRecommendWdiget(),
-          const PainChangeWidget(),
-          const ConditionChangeWidget(),
-          const ShareReportWidget(),
+          SizedBox(height: 10),
+          CenterRecommendWdiget(),
+          PainChangeWidget(),
+          ConditionChangeWidget(),
+          SizedBox(height: 10),
+          ShareReportWidget(),
+          SizedBox(height: 20),
+          FooterWidget()
         ],
       ),
     );
