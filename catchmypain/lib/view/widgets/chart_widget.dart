@@ -74,15 +74,9 @@ class Chart extends StatelessWidget {
           //_$36PainHistoryModelImpl 타입은 PainHistoryModel 타입과 정확히 같지 않습니다
           //PainHistoryModel 인터페이스를 구현하지만, 실제로는 다른 타입
           //따라서 is 키워드를 사용하여 객체가 특정 타입의 인스턴스인지를 확인
-<<<<<<< HEAD
-          int level = item.value is PainHistoryModel
-              ? item.value.level
-              : moodsToInt![item.value.condition];
-=======
           int level = item.value is ConditionModel
               ? moodsToInt![chartData]
               : chartData.toDouble();
->>>>>>> feature_heejeong
           double topPosition = 0;
           double leftPosition = 0;
           textSpanSize = TextSizeControl().textSize(
