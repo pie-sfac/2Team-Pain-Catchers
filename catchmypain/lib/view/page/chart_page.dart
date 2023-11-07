@@ -157,7 +157,6 @@ class _ChartPageState extends ConsumerState<ChartPage> {
                           ),
                           //그래프
                           Chart(
-                            textSpanSize: textSpanSize!,
                             fontSize: fontSize,
                             iconSize: iconSize,
                             usedData: usedData,

@@ -11,7 +11,6 @@ import 'package:catchmypain/util/utils.dart' as utils;
 class Chart extends StatelessWidget {
   Chart(
       {Key? key,
-      required this.textSpanSize,
       required this.fontSize,
       required this.iconSize,
       required this.usedData,
@@ -25,7 +24,6 @@ class Chart extends StatelessWidget {
       this.moodsToInt,
       this.dataNum})
       : super(key: key);
-  Size textSpanSize;
   final double fontSize;
   final double iconSize; //y축 아이콘의 사이즈와 차트위에 아이콘의 사이즈 동일하게 하기
   //가져온 데이터
@@ -93,7 +91,7 @@ class Chart extends StatelessWidget {
               : chartData.toDouble();
           double topPosition = 0;
           double leftPosition = 0;
-          textSpanSize = TextSizeControl().textSize(
+          Size textSpanSize = TextSizeControl().textSize(
               item.value is ConditionModel ? chartData : chartData.toString(),
               TextStyle(fontSize: fontSize));
           print('textSpanSize : ${textSpanSize}');
