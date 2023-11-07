@@ -15,12 +15,14 @@ final exerciseDataProvider = FutureProvider<List<ExerciseData>>((ref) async {
   List<ExerciseData> exerciseDataList = [];
   List<dynamic> hiveData = box.get('pushupData') ?? [];
 
-  for (var item in hiveData) {
-    var exeDataList = jsonDecode(item as String);
-    if (exeDataList != null) {
-      for (var exeData in exeDataList) {
-        var data = ExerciseData.fromJson(exeData);
-        exerciseDataList.add(data);
+  if (hiveData.isNotEmpty) {
+    for (var item in hiveData) {
+      var exeDataList = jsonDecode(item as String);
+      if (exeDataList != null) {
+        for (var exeData in exeDataList) {
+          var data = ExerciseData.fromJson(exeData);
+          exerciseDataList.add(data);
+        }
       }
     }
   }

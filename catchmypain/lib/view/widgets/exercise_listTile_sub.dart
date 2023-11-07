@@ -67,7 +67,7 @@ class ExerciseListTileSub extends StatelessWidget {
                             style: const TextStyle(
                                 color: Colors.black, fontSize: 20)),
                         Text(exerciseDataList[i].poseState),
-                        Text(exerciseDataList[i].angles.durationTime),
+                        Text(exerciseDataList[i].durationTime),
                         Text(utils
                             .angle(
                                 exerciseDataList[i].ltShoulder,
