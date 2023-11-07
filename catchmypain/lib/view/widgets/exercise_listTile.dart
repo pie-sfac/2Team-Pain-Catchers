@@ -38,7 +38,7 @@ class ExerciseListTile extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Text('지속시간'),
-                Text('${exerciseListTileData.angles.durationTime} 초'),
+                Text('${exerciseListTileData.durationTime} 초'),
               ],
             ),
             Row(
