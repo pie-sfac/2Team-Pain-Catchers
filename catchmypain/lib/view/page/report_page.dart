@@ -1,6 +1,7 @@
 import 'package:catchmypain/view/widgets/report_view_widgets/advertisement_widget.dart';
 import 'package:catchmypain/view/widgets/report_view_widgets/center_recommend_widget.dart';
 import 'package:catchmypain/view/widgets/report_view_widgets/condition_change_widget.dart';
+import 'package:catchmypain/view/widgets/report_view_widgets/exercise_ability_widget.dart';
 import 'package:catchmypain/view/widgets/report_view_widgets/feedback_list_widget.dart';
 import 'package:catchmypain/view/widgets/report_view_widgets/footer_widget.dart';
 import 'package:catchmypain/view/widgets/report_view_widgets/head_title.dart';
@@ -25,7 +26,10 @@ class ReportPage extends StatelessWidget {
           FeedBackListWidget(),
           SizedBox(height: 10),
           CenterRecommendWdiget(),
-          PainChangeWidget(),
+          //PainChangeWidget(),
+          SizedBox(height: 10),
+          ExerciseAbilityWidget(),
+          SizedBox(height: 10),
           ConditionChangeWidget(),
           SizedBox(height: 10),
           ShareReportWidget(),

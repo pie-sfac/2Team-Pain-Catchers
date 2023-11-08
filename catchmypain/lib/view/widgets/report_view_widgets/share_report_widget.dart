@@ -16,7 +16,7 @@ class ShareReportWidget extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  '최상현 회원님의 \n퍼스널 레포트를 공유해 보세요',
+                  '신주희 회원님의 \n퍼스널 레포트를 공유해 보세요',
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 15,

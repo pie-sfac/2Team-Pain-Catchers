@@ -16,7 +16,7 @@ class ImageListWidget extends StatelessWidget {
               SizedBox(width: 10),
               // Text is now an individual widget, not wrapped in Expanded
               Text(
-                '최상현 회원님 영상 및 이미지',
+                '신주희 회원님 영상 및 이미지',
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 15,

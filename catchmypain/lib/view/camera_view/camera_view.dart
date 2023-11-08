@@ -228,9 +228,11 @@ class _CameraViewState extends ConsumerState<CameraView> {
             _poseStatetxt(),
             _counterWidget(),
           ],
-          _backButton(),
-          _switchLiveCameraToggle(),
-          _switchPoseDetectionToggle(),
+          if (_isRecordTimerStart != true) ...[
+            _backButton(),
+            _switchLiveCameraToggle(),
+            _switchPoseDetectionToggle(),
+          ],
           _zoomControl(),
           _exposureControl(),
         ],
@@ -623,10 +625,8 @@ class _CameraViewState extends ConsumerState<CameraView> {
   // 토글 버튼 처리
   void _toggleMode() async {
     if (_changingPoseDetection) {
-      // ML Kit 사용 중이면 모두 중지하고 비디오 녹화 시작
       await _stopEverything().then((_) => _startVideoFeed());
     } else {
-      // 비디오 녹화 중이면 모두 중지하고 ML Kit 시작
       await _stopEverything().then((_) => _startLiveFeed());
     }
     _changingPoseDetection = !_changingPoseDetection; // 토글 상태 변경

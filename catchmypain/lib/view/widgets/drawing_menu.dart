@@ -14,6 +14,7 @@ class DrawingMenu extends ConsumerWidget {
     final selectedColor = ref.watch(colorProvider);
     final strokeSize = ref.watch(sizeProvider);
     final allSketches = ref.watch(sketchesProvider);
+    final List<Sketch> sketchStack = ref.watch(stackProvider);
 
     void undo() {
       if (ref.read(sketchesProvider.notifier).state.isEmpty) {
@@ -32,7 +33,7 @@ class DrawingMenu extends ConsumerWidget {
     }
 
     void redo() {
-      if (ref.read(stackProvider.notifier).state == []) {
+      if (sketchStack.isEmpty) {
         return;
       } else {
         Sketch tmp = ref.read(stackProvider.notifier).state.removeLast();

@@ -37,7 +37,7 @@ class ConditionChangeWidget extends StatelessWidget {
           ),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 30),
-            child: Text('최상현 회원님의 최근 기분 변화입니다.'),
+            child: Text('신주희 회원님의 최근 기분 변화입니다.'),
           ),
           Padding(
             padding: EdgeInsets.symmetric(vertical: 8, horizontal: 50),

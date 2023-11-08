@@ -89,10 +89,6 @@ class _ChartPageState extends ConsumerState<ChartPage> {
     AsyncValue<List<ExerciseData>> stdExerciseDataAsyncValue =
         ref.watch(stdExerciseDataProvider);
 
-    print('reportDataAsyncValue: ${reportDataAsyncValue.value}');
-    print('exerciseDataAsyncValue: ${exerciseDataAsyncValue.value}');
-    print(
-        'stdExerciseDataAsyncValue: ${stdExerciseDataAsyncValue.value!.first.durationTime}');
     bool labelCheckboxState = ref.watch(checkboxProvider);
     bool filledCheckboxState = ref.watch(filledProvider);
     bool lineCheckboxState = ref.watch(lineProvider);
@@ -113,7 +109,6 @@ class _ChartPageState extends ConsumerState<ChartPage> {
         sizedBoxWidth = [0, 2].contains(chartIndex)
             ? textSpanSize!.width + 5
             : iconSize + 5;
-        print('sizedBoxWidth : ${sizedBoxWidth}');
       }
 
       // 데이터가 준비되었을 때 UI
@@ -138,8 +133,6 @@ class _ChartPageState extends ConsumerState<ChartPage> {
                                   ? reversedLevels.length
                                   : moods.length,
                               itemBuilder: (context, index) {
-                                print(containerHeight / moods.length);
-                                print('containerHeight: $containerHeight');
                                 return [0, 2].contains(chartIndex)
                                     ? Text(
                                         reversedLevels[index].toString(),
@@ -152,7 +145,7 @@ class _ChartPageState extends ConsumerState<ChartPage> {
                               },
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 8,
                           ),
                           //그래프
@@ -189,12 +182,13 @@ class _ChartPageState extends ConsumerState<ChartPage> {
                                         floatingLabelAlignment:
                                             FloatingLabelAlignment.center,
                                         hintText: '글자 크기(15)',
-                                        hintStyle: TextStyle(fontSize: 11),
+                                        hintStyle:
+                                            const TextStyle(fontSize: 11),
                                         border: OutlineInputBorder(
                                           // 테두리 스타일 설정
                                           borderRadius: BorderRadius.circular(
                                               10.0), // 둥근 모서리 설정
-                                          borderSide: BorderSide(
+                                          borderSide: const BorderSide(
                                               color: Colors.blue), // 테두리 색상 설정
                                         ),
                                       ),
@@ -213,7 +207,7 @@ class _ChartPageState extends ConsumerState<ChartPage> {
                                               }
                                             },
                                           ),
-                                          Text('라벨표시')
+                                          const Text('라벨표시')
                                         ]),
                                     Row(
                                         mainAxisSize: MainAxisSize.min,
@@ -229,7 +223,7 @@ class _ChartPageState extends ConsumerState<ChartPage> {
                                               }
                                             },
                                           ),
-                                          Text('선밑 색')
+                                          const Text('선밑 색')
                                         ]),
                                     Row(
                                         mainAxisSize: MainAxisSize.min,
@@ -244,7 +238,7 @@ class _ChartPageState extends ConsumerState<ChartPage> {
                                               }
                                             },
                                           ),
-                                          Text('직선')
+                                          const Text('직선')
                                         ]),
                                   ]))
                         ]),
@@ -260,33 +254,37 @@ class _ChartPageState extends ConsumerState<ChartPage> {
                                   (chartIndex == 2 ? dataNum : usedData.length),
                               itemCount:
                                   chartIndex == 2 ? dataNum : usedData.length,
-                              itemBuilder: (context, index) => Center(
-                                  child: Text(
-                                chartIndex < 2
-                                    ? usedData[index].date
-                                    : usedData[index].durationTime,
-                                style: TextStyle(fontSize: fontSize),
-                              )),
+                              itemBuilder: (context, index) {
+                                {
+                                  return Center(
+                                      child: Text(
+                                    chartIndex < 2
+                                        ? usedData[index].date
+                                        : usedData[index].durationTime,
+                                    style: TextStyle(fontSize: fontSize),
+                                  ));
+                                }
+                              },
                             )))
                   ]))));
     }
 
     if (chartIndex < 2) {
       return reportDataAsyncValue.when(
-          loading: () => CircularProgressIndicator(), // 로딩 중 상태 UI
+          loading: () => const CircularProgressIndicator(), // 로딩 중 상태 UI
           error: (error, stack) => Text('Error: $error'), // 에러 상태 UI
           data: (report) {
             memberName = report.member.name;
             condition = report.condition;
             painHistory = report.painHistory;
             usedData = chartIndex == 0 ? painHistory : condition;
-            if (usedData.length != 0) {
+            if (usedData.isNotEmpty) {
               //범례 범위 리스트(역순)
               reversedLevels = YRange().findMinMaxLevels(painHistory);
               return dataWidget();
             }
 
-            return Center(
+            return const Center(
               child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [Text('No Data')]),
@@ -294,22 +292,21 @@ class _ChartPageState extends ConsumerState<ChartPage> {
           });
     } else {
       return exerciseDataAsyncValue.when(
-          loading: () => CircularProgressIndicator(), // 로딩 중 상태 UI
+          loading: () => const CircularProgressIndicator(), // 로딩 중 상태 UI
           error: (error, stack) => Text('Error: $error'), // 에러 상태 UI
           data: (exerciseDataList) {
             return stdExerciseDataAsyncValue.when(
-                loading: () => CircularProgressIndicator(), // 로딩 중 상태 UI
+                loading: () => const CircularProgressIndicator(), // 로딩 중 상태 UI
                 error: (error, stack) => Text('Error: $error'), // 에러 상태 UI
                 data: (stdExerciseDataList) {
                   usedData = exerciseDataList;
 
-                  if (usedData.length != 0) {
+                  if (usedData.isNotEmpty) {
                     //범례 범위 리스트(역순)
                     reversedLevels = YRange().findMinMaxExer(usedData, dataNum);
-                    print('reversedLevels : ${reversedLevels}');
                     return dataWidget();
                   }
-                  return Center(
+                  return const Center(
                     child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [Text('No Data')]),
