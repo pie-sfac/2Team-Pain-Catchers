@@ -7,7 +7,7 @@ class YRange {
   double _maxLevel = 0;
   List<double> _levels = []; //y축 범위
   List<double> _reversed_Levels = [];
-  int _dividerNum = 5;
+  final int _dividerNum = 5;
 
   //데이터 중 최소값, 최대값 찾음
   findMinMaxLevels(List<PainHistoryModel> history) {
@@ -27,8 +27,6 @@ class YRange {
         _maxLevel = level.toDouble();
       }
     }
-    print(_minLevel);
-    print(_maxLevel);
     var ranMin = _minLevel - 1;
     var ranMax = _maxLevel + 1;
     _levels =
@@ -62,8 +60,6 @@ class YRange {
         _maxLevel = angle.toDouble();
       }
     }
-    print(_minLevel);
-    print(_maxLevel);
     var ranMin = _minLevel - 1;
     var ranMax = _maxLevel + 1;
     _levels =
@@ -78,7 +74,6 @@ class YRange {
     for (double value = minValue; value <= maxValue; value += interval) {
       _levels.add(double.parse(value.toStringAsFixed(2)));
     }
-    print(_levels);
     return _levels;
   }
 }

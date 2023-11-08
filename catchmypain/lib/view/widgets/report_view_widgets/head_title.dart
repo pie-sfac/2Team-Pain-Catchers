@@ -11,7 +11,7 @@ class HeadTitleWidget extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            "최상현 회원님",
+            "신주희 회원님",
             style: TextStyle(
               color: Colors.black,
               fontSize: 20,

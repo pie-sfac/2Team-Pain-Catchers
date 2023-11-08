@@ -99,7 +99,7 @@ class DrawingPage extends ConsumerWidget {
                 Container(
                   decoration: BoxDecoration(
                       image: DecorationImage(
-                          image: AssetImage('asset/images/sidePlank.jpg'))),
+                          image: AssetImage('asset/images/paint_pose.png'))),
                 ),
                 Visibility(
                   maintainState: true,
@@ -121,11 +121,11 @@ class DrawingPage extends ConsumerWidget {
                       Visibility(
                         visible: !isPaletteOpen,
                         child: FloatingActionButton(
-                            child: Icon(Icons.palette),
+                            heroTag: Object(),
                             backgroundColor: Color.fromRGBO(45, 98, 234, 1),
-                            onPressed: () => ref
-                                .read(paletteProvider.notifier)
-                                .state = true),
+                            onPressed: () =>
+                                ref.read(paletteProvider.notifier).state = true,
+                            child: Icon(Icons.palette)),
                       ),
                       Visibility(
                         visible: isPaletteOpen,
@@ -145,18 +145,20 @@ class DrawingPage extends ConsumerWidget {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       FloatingActionButton(
-                          child: Icon(Icons.refresh),
+                          heroTag: Object(),
                           backgroundColor: Color.fromRGBO(45, 98, 234, 1),
                           onPressed: () {
                             if (ref.read(sketchesProvider).isNotEmpty) {
                               ref.read(sketchesProvider.notifier).state = [];
                               ref.read(stackProvider.notifier).state = [];
                             }
-                          }),
+                          },
+                          child: Icon(Icons.refresh)),
                       SizedBox(
                         height: 8,
                       ),
                       FloatingActionButton(
+                          heroTag: Object(),
                           backgroundColor: Color.fromRGBO(45, 98, 234, 1),
                           child: Icon(Icons.save),
                           onPressed: () {

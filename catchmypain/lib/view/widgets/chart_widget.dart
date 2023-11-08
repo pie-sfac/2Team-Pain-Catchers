@@ -71,7 +71,6 @@ class Chart extends StatelessWidget {
             .map((item) {
           if (item.value is PainHistoryModel) {
             chartData = item.value.level;
-            print('chartData(angles.leftWES) : ${chartData}');
           } else if (item.value is ConditionModel) {
             chartData = item.value.condition;
           } else if (item.value is ExerciseData) {
@@ -79,7 +78,6 @@ class Chart extends StatelessWidget {
                 .angle(item.value.ltShoulder, item.value.ltElbow,
                     item.value.ltWrist)
                 .toStringAsFixed(1));
-            print('chartData(angles.leftWES) : ${chartData}');
           }
 
           //item.value.runtimeType : _$36PainHistoryModelImpl
@@ -94,7 +92,6 @@ class Chart extends StatelessWidget {
           Size textSpanSize = TextSizeControl().textSize(
               item.value is ConditionModel ? chartData : chartData.toString(),
               TextStyle(fontSize: fontSize));
-          print('textSpanSize : ${textSpanSize}');
 
           //범례가 아이콘일 때
           if (item.value is ConditionModel) {
@@ -147,8 +144,6 @@ class Chart extends StatelessWidget {
                   (containerWidth / usedData.take(dataNum!).length) / 2 -
                   iconSize / 2;
             }
-            print('topposition : ${topPosition}');
-            print('leftPosition : ${leftPosition}');
           }
 
           // print(iconSize);

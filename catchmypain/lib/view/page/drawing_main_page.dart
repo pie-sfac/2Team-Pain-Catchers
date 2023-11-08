@@ -32,7 +32,7 @@ class DrawingMainPage extends ConsumerWidget {
                   Padding(
                     padding: const EdgeInsets.all(12.0),
                     child: Image.asset(
-                      'asset/images/sidePlank.jpg',
+                      'asset/images/paint_pose.png',
                       width: 70,
                     ),
                   ),

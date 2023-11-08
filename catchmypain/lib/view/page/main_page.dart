@@ -20,19 +20,19 @@ class MainPage extends ConsumerWidget {
       initialPage: menuIndex,
     );
     const List<BottomNavigationBarItem> navItems = [
+      BottomNavigationBarItem(icon: Icon(Icons.draw_outlined), label: '자세 교정'),
+      BottomNavigationBarItem(
+          icon: Icon(Icons.camera_alt_outlined), label: '운동평가'),
       BottomNavigationBarItem(
           icon: Icon(Icons.add_chart_outlined), label: '차트'),
-      BottomNavigationBarItem(icon: Icon(Icons.draw_outlined), label: '드로잉'),
       BottomNavigationBarItem(
           icon: Icon(Icons.note_alt_outlined), label: '퍼스널레포트'),
-      BottomNavigationBarItem(
-          icon: Icon(Icons.camera_alt_outlined), label: '카메라'),
     ];
 
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: menuIndex == 0
+        title: menuIndex == 2
             ? Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
@@ -65,7 +65,7 @@ class MainPage extends ConsumerWidget {
                   ),
                 ],
               )
-            : menuIndex == 3
+            : menuIndex == 1
                 ? Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
@@ -152,10 +152,10 @@ class MainPage extends ConsumerWidget {
           controller: pageController,
           onPageChanged: (i) => ref.read(indexProvider.notifier).value = i,
           children: const [
-            ChartPage(),
             DrawingMainPage(),
-            ReportPage(),
             ExerciseCameraPage(),
+            ChartPage(),
+            ReportPage(),
           ]),
       bottomNavigationBar: BottomNavigationBar(
         onTap: (value) {
