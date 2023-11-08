@@ -1,5 +1,6 @@
 import 'package:catchmypain/provider/page_provider.dart';
 import 'package:catchmypain/view/page/chart_page.dart';
+import 'package:catchmypain/view/page/drawing_main_page.dart';
 import 'package:catchmypain/view/page/drawing_page.dart';
 import 'package:catchmypain/view/page/exercise_camera_page.dart';
 import 'package:catchmypain/view/page/report_page.dart';
@@ -152,7 +153,7 @@ class MainPage extends ConsumerWidget {
           onPageChanged: (i) => ref.read(indexProvider.notifier).value = i,
           children: const [
             ChartPage(),
-            DrawingPage(),
+            DrawingMainPage(),
             ReportPage(),
             ExerciseCameraPage(),
           ]),
