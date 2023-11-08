@@ -18,3 +18,7 @@ final drawingModeProvider = StateProvider<DrawingMode>((ref) => DrawingMode.penc
 final stackProvider = StateProvider<List<Sketch>>((ref) => []);
 
 final saveProvider = StateProvider<List<Sketch>>((ref) => []);
+
+final paletteProvider = StateProvider<bool>((ref) => false);
+
+final showProvider = StateProvider<bool>((ref) => true);

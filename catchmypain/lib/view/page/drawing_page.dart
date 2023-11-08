@@ -2,241 +2,186 @@
 
 import 'package:catchmypain/provider/drawing_provider.dart';
 import 'package:catchmypain/view/widgets/drawing_canvas.dart';
+import 'package:catchmypain/view/widgets/drawing_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:catchmypain/model/sketch.dart';
+import 'package:go_router/go_router.dart';
 
 class DrawingPage extends ConsumerWidget {
   const DrawingPage({super.key});
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // colorProvider를 감시하여 현재 Color 상태를 가져옵니다.
-    final selectedColor = ref.watch(colorProvider);
-    final strokeSize = ref.watch(sizeProvider);
-    // final allSketches = ref.watch(sketchesProvider);
-    // final currentSketch = ref.watch(sketchProvider);
-    // final sketchStack = ref.watch(stackProvider);
-
-    bool isMenuOpen = true;
-    
-    void undo() {
-      if (ref.read(sketchesProvider.notifier).state.isEmpty)
-        return;
-      else {
-        Sketch tmp = ref.read(sketchesProvider.notifier).state.removeLast();
-        ref.read(stackProvider.notifier).state.add(tmp);
-        ref.read(sketchProvider.notifier).state = Sketch(
-            points: [],
-            color: selectedColor,
-            size: strokeSize,
-            mode: DrawingMode.pencil);
-        // Trigger a rebuild after state change
-        ref.refresh(sketchProvider);
-       
-      }
-    }
-
-    void redo() {
-      if (ref.read(stackProvider.notifier).state.isEmpty) {
-        return;
-      } else {
-        Sketch tmp = ref.read(stackProvider.notifier).state.removeLast();
-        ref.read(sketchesProvider.notifier).state.add(tmp);
-        ref.read(sketchProvider.notifier).state = tmp;
-        ref.refresh(sketchProvider);
-      }
-    }
+    final bool isPaletteOpen = ref.watch(paletteProvider);
+    final bool isSketchOn = ref.watch(showProvider);
 
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.menu),
-          onPressed: () => isMenuOpen,
-        ),
-        title: Text('Drawing App'),
-        centerTitle: true,
-      ),
-      body: PageView(
-        children: [
-          Stack(
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                    image: DecorationImage(
-                        image: AssetImage('asset/images/sidePlank.jpg'))),
-              ),
-              SizedBox(
-                //color: kCanvasColor,
-                width: double.maxFinite,
-                height: double.maxFinite,
-                child: DrawingCanvas(
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height,
+        backgroundColor: Colors.white,
+        title: Text('Drawing'),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(children: [
+              const Padding(
+                padding: EdgeInsets.all(4.0),
+                child: Icon(
+                  Icons.person_4_rounded,
+                  color: Colors.black,
                 ),
               ),
-              Visibility(
-                visible: isMenuOpen,
-                child: Positioned(
-                  child: Container(
-                    color: Colors.white,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                              icon: Icon(Icons.circle),
-                              onPressed: () {
-                                ref.read(colorProvider.notifier).state =
-                                    Colors.red;
-                              },
-                              color: Colors.red,
-                            ),
-                            IconButton(
-                              icon: Icon(Icons.circle),
-                              onPressed: () {
-                                ref.read(colorProvider.notifier).state =
-                                    Colors.yellow;
-                              },
-                              color: Colors.yellow,
-                            ),
-                            IconButton(
-                              icon: Icon(Icons.circle),
-                              onPressed: () {
-                                ref.read(colorProvider.notifier).state =
-                                    Colors.blue;
-                              },
-                              color: Colors.blue,
-                            ),
-                            IconButton(
-                              icon: Icon(Icons.circle),
-                              onPressed: () {
-                                ref.read(colorProvider.notifier).state =
-                                    Colors.green;
-                              },
-                              color: Colors.green,
-                            ),
-                            IconButton(
-                              icon: Icon(Icons.circle),
-                              onPressed: () {
-                                ref.read(colorProvider.notifier).state =
-                                    Colors.black;
-                              },
-                              color: Colors.black,
-                            ),
-                          ],
-                        ),
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                              icon: Icon(Icons.circle_outlined),
-                              onPressed: () {
-                                ref.read(drawingModeProvider.notifier).state =
-                                    DrawingMode.circle;
-                              },
-                            ),
-                            IconButton(
-                              icon: Icon(Icons.square_outlined),
-                              onPressed: () {
-                                ref.read(drawingModeProvider.notifier).state =
-                                    DrawingMode.rect;
-                              },
-                            ),
-                            IconButton(
-                              icon: Icon(Icons.horizontal_rule),
-                              onPressed: () {
-                                ref.read(drawingModeProvider.notifier).state =
-                                    DrawingMode.line;
-                              },
-                            ),
-                            IconButton(
-                              icon: Icon(Icons.edit),
-                              onPressed: () {
-                                ref.read(drawingModeProvider.notifier).state =
-                                    DrawingMode.pencil;
-                              },
-                            ),
-                          ],
-                        ),
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            SizedBox(
-                              width: 8,
-                            ),
-                            Icon(Icons.line_weight),
-                            SizedBox(
-                              width: 4,
-                            ),
-                            Slider(
-                              thumbColor: Colors.white,
-                              activeColor: Colors.grey,
-                              inactiveColor: Colors.grey.withOpacity(0.5),
-                              value: strokeSize,
-                              min: 0,
-                              max: 30,
-                              onChanged: (val) {
-                                ref.read(sizeProvider.notifier).state = val;
-                              },
-                            ),
-                          ],
-                        ),
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                                onPressed: () => undo(),
-                                icon: (ref.watch(sketchesProvider).isNotEmpty)
-                                    ? Icon(Icons.undo)
-                                    : Icon(
-                                        Icons.undo,
-                                        color: Colors.grey,
-                                      )),
-                            IconButton(
-                                onPressed: () => redo(),
-                                icon: (ref.watch(stackProvider).isNotEmpty)
-                                    ? Icon(Icons.redo)
-                                    : Icon(
-                                        Icons.redo,
-                                        color: Colors.grey,
-                                      ))
-                          ],
-                        )
-                      ],
-                    ),
+              const Padding(
+                padding: EdgeInsets.all(4.0),
+                child: Text(
+                  '최상현',
+                  style: TextStyle(color: Colors.black),
+                ),
+              ),
+              Container(
+                decoration: BoxDecoration(
+                    color: Colors.grey.shade300,
+                    borderRadius: BorderRadius.circular(5)),
+                child: const Padding(
+                  padding: EdgeInsets.all(4.0),
+                  child: Text(
+                    '플랜 이용중',
+                    style: TextStyle(color: Colors.blue),
+                    textAlign: TextAlign.center,
                   ),
                 ),
               ),
-            ],
+            ]),
           ),
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            // crossAxisAlignment: CrossAxisAlignment.baseline,
-            children: [
-              Stack(
-                children: [],
-              )
-            ],
+          const Center(
+            child: Text(
+              '|',
+              style: TextStyle(color: Colors.black),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          IconButton(
+              onPressed: () => {},
+              icon: const Icon(
+                Icons.notifications,
+                color: Colors.black,
+              )),
+        ],
+        leading: Image.asset('asset/images/wix_logo.png'),
+        leadingWidth: 80,
+      ),
+      body: Column(
+        children: [
+          AppBar(
+              foregroundColor: Colors.black,
+              backgroundColor: Colors.white,
+              leading: InkWell(
+                  child: Icon(Icons.navigate_before),
+                  onTap: () {
+                    context.pop();
+                  }),
+              title: Text("신주희 회원님"),
+              actions: [
+                isSketchOn ? Icon(Icons.edit) : Icon(Icons.edit_off),
+                Switch(
+                  activeColor: Color.fromRGBO(45, 98, 234, 1),
+                  inactiveTrackColor: Color.fromRGBO(191, 209, 255, 1),
+                  value: isSketchOn,
+                  onChanged: (value) {
+                    ref.read(showProvider.notifier).state = value;
+                  },
+                ),
+                SizedBox(
+                  width: 8,
+                )
+              ]),
+          Expanded(
+            child: Stack(
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                      image: DecorationImage(
+                          image: AssetImage('asset/images/sidePlank.jpg'))),
+                ),
+                Visibility(
+                  maintainState: true,
+                  visible: isSketchOn,
+                  child: SizedBox(
+                    width: double.maxFinite,
+                    height: double.maxFinite,
+                    child: DrawingCanvas(
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height,
+                    ),
+                  ),
+                ),
+                Positioned(
+                  top: 12,
+                  left: 12,
+                  child: Column(
+                    children: [
+                      Visibility(
+                        visible: !isPaletteOpen,
+                        child: FloatingActionButton(
+                            child: Icon(Icons.palette),
+                            backgroundColor: Color.fromRGBO(45, 98, 234, 1),
+                            onPressed: () => ref
+                                .read(paletteProvider.notifier)
+                                .state = true),
+                      ),
+                      Visibility(
+                        visible: isPaletteOpen,
+                        child: GestureDetector(
+                            onHorizontalDragEnd: (_) => ref
+                                .read(paletteProvider.notifier)
+                                .state = false,
+                            child: DrawingMenu()),
+                      ),
+                    ],
+                  ),
+                ),
+                Positioned(
+                  right: 12,
+                  bottom: 12,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      FloatingActionButton(
+                          child: Icon(Icons.refresh),
+                          backgroundColor: Color.fromRGBO(45, 98, 234, 1),
+                          onPressed: () {
+                            if (ref.read(sketchesProvider).isNotEmpty) {
+                              ref.read(sketchesProvider.notifier).state = [];
+                              ref.read(stackProvider.notifier).state = [];
+                            }
+                          }),
+                      SizedBox(
+                        height: 8,
+                      ),
+                      FloatingActionButton(
+                          backgroundColor: Color.fromRGBO(45, 98, 234, 1),
+                          child: Icon(Icons.save),
+                          onPressed: () {
+                            ref.read(saveProvider.notifier).state =
+                                ref.read(sketchesProvider.notifier).state;
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                  behavior: SnackBarBehavior.floating,
+                                  margin: EdgeInsets.only(bottom: 12),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(4)),
+                                  content: Text('수정한 내용을 저장했습니다.')),
+                              // Adjust the border radius here
+                            );
+                            context.pop();
+                          }),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
-      // floatingActionButton: Column(
-      //   mainAxisAlignment: MainAxisAlignment.end,
-      //   children: [
-      //     FloatingActionButton(
-      //       child: Icon(Icons.refresh),
-      //       onPressed: allSketches.value.isNotEmpty
-      //           ? () => undoRedoStack.value.clear()
-      //           : null,
-      //     ),
-      //     FloatingActionButton(
-      //       child: Icon(Icons.save),
-      //       onPressed: () => savedSketches.value = allSketches.value,
-      //     ),
-      //   ],
-      // ),
     );
   }
 }

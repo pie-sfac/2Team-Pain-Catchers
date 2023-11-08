@@ -31,7 +31,7 @@ class DrawingCanvas extends ConsumerWidget {
         width: width,
         child: CustomPaint(
           painter: SketchPainter(
-            sketches: allSketches, //안되면 .state
+            sketches: allSketches,
           ),
         ),
       ),
@@ -56,7 +56,7 @@ class DrawingCanvas extends ConsumerWidget {
             size: strokeSize,
             mode: drawingMode);
 
-        if (ref.read(stackProvider).isNotEmpty) {       //모르겠당... 
+        if (ref.read(stackProvider).isNotEmpty) {
           ref.read(stackProvider.notifier).state = List<Sketch>.from([]);
         }
       },
@@ -73,18 +73,17 @@ class DrawingCanvas extends ConsumerWidget {
             mode: drawingMode);
       },
       onPointerUp: (details) {
-               // 이거 맞나
-
         if (currentSketch != null) {
           ref.read(sketchesProvider.notifier).state =
               List<Sketch>.from(allSketches)..add(currentSketch!);
+
+          ref.read(sketchProvider.notifier).state = Sketch(
+              // 현재 스케치를 초기화합니다.
+              points: [],
+              color: selectedColor,
+              size: strokeSize,
+              mode: drawingMode);
         }
-        // 현재 스케치를 초기화합니다.
-        ref.read(sketchProvider.notifier).state = Sketch(
-            points: [],
-            color: selectedColor,
-            size: strokeSize,
-            mode: drawingMode);
       },
       child: RepaintBoundary(
         child: SizedBox(
@@ -109,6 +108,7 @@ class SketchPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     // TODO: implement paint
+
     for (Sketch sketch in sketches) {
       final points = sketch.points;
 
