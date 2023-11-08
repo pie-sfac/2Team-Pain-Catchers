@@ -54,6 +54,15 @@ class MainPage extends ConsumerWidget {
                       style: TextStyle(color: Colors.black),
                     ),
                   ),
+                  GestureDetector(
+                    onTap: () {
+                      ref.read(chartIndexProvider.notifier).value = 2;
+                    },
+                    child: const Text(
+                      'exercise',
+                      style: TextStyle(color: Colors.black),
+                    ),
+                  ),
                 ],
               )
             : menuIndex == 3

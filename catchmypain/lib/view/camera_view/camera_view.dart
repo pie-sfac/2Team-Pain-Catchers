@@ -5,11 +5,10 @@ import 'package:catchmypain/painter/pose_painter.dart';
 import 'package:catchmypain/provider/exercise_record_provider.dart';
 import 'package:catchmypain/provider/push_up_provider.dart';
 import 'package:catchmypain/util/exercise_verification.dart';
-import 'package:catchmypain/util/utils.dart' as utils;
 import 'package:camera/camera.dart';
 import 'package:catchmypain/model/exercisedata.dart';
-import 'package:catchmypain/view/widgets/camer_view_widgets/countdown_timer.dart';
-import 'package:catchmypain/view/widgets/camer_view_widgets/record_timer.dart';
+import 'package:catchmypain/view/widgets/camera_view_widgets/countdown_timer.dart';
+import 'package:catchmypain/view/widgets/camera_view_widgets/record_timer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -106,16 +105,7 @@ class _CameraViewState extends ConsumerState<CameraView> {
     ExerciseData exerciseData = ExerciseData(
         count: 0,
         poseState: '',
-        angles: Angles(
-            rightWES: 0,
-            rightESH: 0,
-            rightSHK: 0,
-            rightHKA: 0,
-            leftWES: 0,
-            leftESH: 0,
-            leftSHK: 0,
-            leftHKA: 0,
-            durationTime: ''),
+        durationTime: '',
         recordTime: '',
         rtShoulder: CoordinateLandmark(
             x: rtShoulder!.x, y: rtShoulder!.y, z: rtShoulder!.z),
@@ -146,7 +136,7 @@ class _CameraViewState extends ConsumerState<CameraView> {
       final elapsedTime = DateTime.now().difference(startTime);
       exerciseData.count = ref.read(pushUpCounterProvider.notifier).counter;
       exerciseData.poseState = ref.read(pushUpCounterProvider).name;
-      exerciseData.angles.durationTime =
+      exerciseData.durationTime =
           (elapsedTime.inMilliseconds / 1000).toStringAsFixed(2);
       String formattedDateTime =
           "${startTime.year}-${startTime.month.toString().padLeft(2, '0')}-${startTime.day.toString().padLeft(2, '0')} ${startTime.hour.toString().padLeft(2, '0')}:${startTime.minute.toString().padLeft(2, '0')}:${startTime.second.toString().padLeft(2, '0')}";
@@ -181,43 +171,9 @@ class _CameraViewState extends ConsumerState<CameraView> {
       //verification
       WidgetsBinding.instance.addPostFrameCallback((_) {
         final exerciseVerification = ExerciseVerification(ref);
-        if (rtShoulder != null &&
-            rtElbow != null &&
-            rtWrist != null &&
-            ltShoulder != null &&
-            ltElbow != null &&
-            ltWrist != null) {
+        if (widget.exercise == 'arm_press') {
           exerciseVerification.ArmsUp(
               rtShoulder!, rtElbow!, rtWrist!, ltShoulder!, ltElbow!, ltWrist!);
-          //   final rtaAngle = utils.angle(
-          //       CoordinateLandmark.fromPoseLandMark(rtShoulder!),
-          //       CoordinateLandmark.fromPoseLandMark(rtElbow!),
-          //       CoordinateLandmark.fromPoseLandMark(rtWrist!));
-          //   final ltaAngle = utils.angle(
-          //       CoordinateLandmark.fromPoseLandMark(ltShoulder!),
-          //       CoordinateLandmark.fromPoseLandMark(ltElbow!),
-          //       CoordinateLandmark.fromPoseLandMark(ltWrist!));
-          //   final rta =
-          //       utils.isPushUp(rtaAngle, ref.watch(pushUpCounterProvider));
-          //   final lta =
-          //       utils.isPushUp(ltaAngle, ref.watch(pushUpCounterProvider));
-          //   // If both arms satisfy push-up conditions
-          //   if (rta != null && lta != null) {
-          //     if (rta == PushUpState.init && lta == PushUpState.init) {
-          //       ref.read(pushUpCounterProvider.notifier).setPushUpState(
-          //           rta); // Assuming rta and lta have the same state
-          //     } else if (rta == PushUpState.ArmsDown &&
-          //         lta == PushUpState.ArmsDown) {
-          //       ref.read(pushUpCounterProvider.notifier).setPushUpState(rta);
-          //     } else if (rta == PushUpState.complete &&
-          //         lta == PushUpState.complete) {
-          //       //_saveImage(currentCameraImage!.bytes);
-          //       ref.read(pushUpCounterProvider.notifier).increment();
-          //       ref
-          //           .read(pushUpCounterProvider.notifier)
-          //           .setPushUpState(PushUpState.ArmsUp); // Reset to neutral state
-          //     }
-          //   }
         }
       });
     }
@@ -597,7 +553,6 @@ class _CameraViewState extends ConsumerState<CameraView> {
     });
   }
 
-//////////////////////////////////////////////
   Future<void> _startVideoFeed() async {
     final camera = _cameras[_cameraIndex];
     _controller = CameraController(
@@ -677,7 +632,6 @@ class _CameraViewState extends ConsumerState<CameraView> {
     _changingPoseDetection = !_changingPoseDetection; // 토글 상태 변경
   }
 
-///////////////////////////////////////////
   Future _stopLiveFeed() async {
     try {
       // 이미지 스트림을 중지합니다. null과 이미지 스트림 상태를 체크합니다.
