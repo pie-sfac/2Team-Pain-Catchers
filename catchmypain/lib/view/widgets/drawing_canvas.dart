@@ -107,8 +107,6 @@ class SketchPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    // TODO: implement paint
-
     for (Sketch sketch in sketches) {
       final points = sketch.points;
 

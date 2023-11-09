@@ -8,6 +8,7 @@ import 'package:catchmypain/view/widgets/report_view_widgets/head_title.dart';
 import 'package:catchmypain/view/widgets/report_view_widgets/image_list_widget.dart';
 import 'package:catchmypain/view/widgets/report_view_widgets/pain_change_widget.dart';
 import 'package:catchmypain/view/widgets/report_view_widgets/share_report_widget.dart';
+import 'package:catchmypain/view/widgets/show_drawing_widget.dart';
 import 'package:flutter/material.dart';
 
 class ReportPage extends StatelessWidget {
@@ -18,7 +19,7 @@ class ReportPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: ListView(
-        children: const [
+        children: [
           HeadTitleWidget(),
           AdvertisementWidget(),
           ImageListWidget(),
@@ -32,6 +33,28 @@ class ReportPage extends StatelessWidget {
           SizedBox(height: 10),
           ConditionChangeWidget(),
           SizedBox(height: 10),
+          Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                SizedBox(width: 24,),
+                Icon(Icons.circle, color: Colors.blue, size: 10),
+                SizedBox(width: 10),
+                Text(
+                  '자세 교정',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                
+              ],
+            ),
+          Container(
+            height: 500,
+            child: ShowDrawing(),
+            ),
+            SizedBox(height: 20),
           ShareReportWidget(),
           SizedBox(height: 20),
           FooterWidget()
