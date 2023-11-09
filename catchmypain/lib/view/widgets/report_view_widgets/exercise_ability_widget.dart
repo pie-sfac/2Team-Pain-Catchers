@@ -49,10 +49,10 @@ class ExerciseAbilityWidget extends StatelessWidget {
                   imgPath: 'asset/images/exercise_table.png',
                   abilityType: '테이블',
                 ),
-                ExerciseAbilityCardWidget(
-                  imgPath: 'asset/images/paint_user.png',
-                  abilityType: '사진',
-                ),
+                // ExerciseAbilityCardWidget(
+                //   imgPath: 'asset/images/paint_user.png',
+                //   abilityType: '사진',
+                // ),
               ],
             ),
           )

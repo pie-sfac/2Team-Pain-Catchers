@@ -1,7 +1,6 @@
 import 'package:catchmypain/provider/page_provider.dart';
 import 'package:catchmypain/view/page/chart_page.dart';
 import 'package:catchmypain/view/page/drawing_main_page.dart';
-import 'package:catchmypain/view/page/drawing_page.dart';
 import 'package:catchmypain/view/page/exercise_camera_page.dart';
 import 'package:catchmypain/view/page/report_page.dart';
 import 'package:flutter/material.dart';
