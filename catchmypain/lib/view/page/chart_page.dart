@@ -116,157 +116,169 @@ class _ChartPageState extends ConsumerState<ChartPage> {
           body: Center(
               child: Padding(
                   padding: const EdgeInsets.all(8),
-                  child: Column(children: [
-                    Row(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          //y축
-                          SizedBox(
-                            width: sizedBoxWidth,
-                            height: containerHeight,
-                            child: ListView.builder(
-                              itemExtent: [0, 2].contains(chartIndex)
-                                  ? containerHeight / reversedLevels.length
-                                  : containerHeight / moods.length,
-                              itemCount: [0, 2].contains(chartIndex)
-                                  ? reversedLevels.length
-                                  : moods.length,
-                              itemBuilder: (context, index) {
-                                return [0, 2].contains(chartIndex)
-                                    ? Text(
-                                        reversedLevels[index].toString(),
-                                        style: TextStyle(fontSize: fontSize),
-                                      )
-                                    : Icon(
-                                        moods[index],
-                                        size: iconSize,
-                                      );
-                              },
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 8,
-                          ),
-                          //그래프
-                          Chart(
-                            fontSize: fontSize,
-                            iconSize: iconSize,
-                            usedData: usedData,
-                            containerWidth: containerWidth,
-                            containerHeight: containerHeight,
-                            labelCheck: labelCheckboxState,
-                            filledCheck: filledCheckboxState,
-                            lineCheck: lineCheckboxState,
-                            yLength: [0, 2].contains(chartIndex)
-                                ? reversedLevels.length.toDouble()
-                                : moods.length.toDouble(),
-                            reversedList: [0, 2].contains(chartIndex)
-                                ? reversedLevels
-                                : null,
-                            moodsToInt:
-                                [0, 2].contains(chartIndex) ? null : moodsToInt,
-                            dataNum: dataNum,
-                          ),
-                          //글자 크기, 라벨 설정
-                          Container(
-                              padding: const EdgeInsets.only(left: 8),
-                              width: fontSizeContainerWidth,
-                              height: 230,
-                              child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    TextField(
-                                      onChanged: _handleTextChange,
-                                      decoration: InputDecoration(
-                                        floatingLabelAlignment:
-                                            FloatingLabelAlignment.center,
-                                        hintText: '글자 크기(15)',
-                                        hintStyle:
-                                            const TextStyle(fontSize: 11),
-                                        border: OutlineInputBorder(
-                                          // 테두리 스타일 설정
-                                          borderRadius: BorderRadius.circular(
-                                              10.0), // 둥근 모서리 설정
-                                          borderSide: const BorderSide(
-                                              color: Colors.blue), // 테두리 색상 설정
+                  child: ListView(
+                      physics: const NeverScrollableScrollPhysics(),
+                      children: [
+                        Row(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              //y축
+                              SizedBox(
+                                width: sizedBoxWidth,
+                                height: containerHeight,
+                                child: ListView.builder(
+                                  itemExtent: [0, 2].contains(chartIndex)
+                                      ? containerHeight / reversedLevels.length
+                                      : containerHeight / moods.length,
+                                  itemCount: [0, 2].contains(chartIndex)
+                                      ? reversedLevels.length
+                                      : moods.length,
+                                  itemBuilder: (context, index) {
+                                    return [0, 2].contains(chartIndex)
+                                        ? Text(
+                                            reversedLevels[index].toString(),
+                                            style:
+                                                TextStyle(fontSize: fontSize),
+                                          )
+                                        : Icon(
+                                            moods[index],
+                                            size: iconSize,
+                                          );
+                                  },
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 8,
+                              ),
+                              //그래프
+                              Chart(
+                                fontSize: fontSize,
+                                iconSize: iconSize,
+                                usedData: usedData,
+                                containerWidth: containerWidth,
+                                containerHeight: containerHeight,
+                                labelCheck: labelCheckboxState,
+                                filledCheck: filledCheckboxState,
+                                lineCheck: lineCheckboxState,
+                                yLength: [0, 2].contains(chartIndex)
+                                    ? reversedLevels.length.toDouble()
+                                    : moods.length.toDouble(),
+                                reversedList: [0, 2].contains(chartIndex)
+                                    ? reversedLevels
+                                    : null,
+                                moodsToInt: [0, 2].contains(chartIndex)
+                                    ? null
+                                    : moodsToInt,
+                                dataNum: dataNum,
+                              ),
+                              //글자 크기, 라벨 설정
+                              Container(
+                                  padding: const EdgeInsets.only(left: 8),
+                                  width: fontSizeContainerWidth,
+                                  height: 230,
+                                  child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        TextField(
+                                          onChanged: _handleTextChange,
+                                          decoration: InputDecoration(
+                                            floatingLabelAlignment:
+                                                FloatingLabelAlignment.center,
+                                            hintText: '글자 크기(15)',
+                                            hintStyle:
+                                                const TextStyle(fontSize: 11),
+                                            border: OutlineInputBorder(
+                                              // 테두리 스타일 설정
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      10.0), // 둥근 모서리 설정
+                                              borderSide: const BorderSide(
+                                                  color:
+                                                      Colors.blue), // 테두리 색상 설정
+                                            ),
+                                          ),
                                         ),
-                                      ),
-                                    ),
-                                    Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Checkbox(
-                                            value: labelCheckboxState,
-                                            onChanged: (bool? value) {
-                                              if (value != null) {
-                                                ref
-                                                    .read(checkboxProvider
-                                                        .notifier)
-                                                    .state = value;
-                                              }
-                                            },
-                                          ),
-                                          const Text('라벨표시')
-                                        ]),
-                                    Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Checkbox(
-                                            value: filledCheckboxState,
-                                            onChanged: (bool? value) {
-                                              if (value != null) {
-                                                ref
-                                                    .read(
-                                                        filledProvider.notifier)
-                                                    .state = value;
-                                              }
-                                            },
-                                          ),
-                                          const Text('선밑 색')
-                                        ]),
-                                    Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Checkbox(
-                                            value: lineCheckboxState,
-                                            onChanged: (bool? value) {
-                                              if (value != null) {
-                                                ref
-                                                    .read(lineProvider.notifier)
-                                                    .state = value;
-                                              }
-                                            },
-                                          ),
-                                          const Text('직선')
-                                        ]),
-                                  ]))
-                        ]),
-                    //x축
-                    Padding(
-                        padding: EdgeInsets.only(left: sizedBoxWidth, top: 8),
-                        child: SizedBox(
-                            height: 45,
-                            width: containerWidth + fontSizeContainerWidth,
-                            child: ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              itemExtent: (containerWidth) /
-                                  (chartIndex == 2 ? dataNum : usedData.length),
-                              itemCount:
-                                  chartIndex == 2 ? dataNum : usedData.length,
-                              itemBuilder: (context, index) {
-                                {
-                                  return Center(
-                                      child: Text(
-                                    chartIndex < 2
-                                        ? usedData[index].date
-                                        : usedData[index].durationTime,
-                                    style: TextStyle(fontSize: fontSize),
-                                  ));
-                                }
-                              },
-                            )))
-                  ]))));
+                                        Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Checkbox(
+                                                value: labelCheckboxState,
+                                                onChanged: (bool? value) {
+                                                  if (value != null) {
+                                                    ref
+                                                        .read(checkboxProvider
+                                                            .notifier)
+                                                        .state = value;
+                                                  }
+                                                },
+                                              ),
+                                              const Text('라벨표시')
+                                            ]),
+                                        Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Checkbox(
+                                                value: filledCheckboxState,
+                                                onChanged: (bool? value) {
+                                                  if (value != null) {
+                                                    ref
+                                                        .read(filledProvider
+                                                            .notifier)
+                                                        .state = value;
+                                                  }
+                                                },
+                                              ),
+                                              const Text('선밑 색')
+                                            ]),
+                                        Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Checkbox(
+                                                value: lineCheckboxState,
+                                                onChanged: (bool? value) {
+                                                  if (value != null) {
+                                                    ref
+                                                        .read(lineProvider
+                                                            .notifier)
+                                                        .state = value;
+                                                  }
+                                                },
+                                              ),
+                                              const Text('직선')
+                                            ]),
+                                      ]))
+                            ]),
+                        //x축
+                        Padding(
+                            padding:
+                                EdgeInsets.only(left: sizedBoxWidth, top: 8),
+                            child: SizedBox(
+                                height: 45,
+                                width: containerWidth + fontSizeContainerWidth,
+                                child: ListView.builder(
+                                  scrollDirection: Axis.horizontal,
+                                  itemExtent: (containerWidth) /
+                                      (chartIndex == 2
+                                          ? dataNum
+                                          : usedData.length),
+                                  itemCount: chartIndex == 2
+                                      ? dataNum
+                                      : usedData.length,
+                                  itemBuilder: (context, index) {
+                                    {
+                                      return Center(
+                                          child: Text(
+                                        chartIndex < 2
+                                            ? usedData[index].date
+                                            : usedData[index].durationTime,
+                                        style: TextStyle(fontSize: fontSize),
+                                      ));
+                                    }
+                                  },
+                                )))
+                      ]))));
     }
 
     if (chartIndex < 2) {

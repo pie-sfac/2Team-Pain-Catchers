@@ -6,8 +6,7 @@ import 'package:catchmypain/model/sketch.dart';
 import 'drawing_canvas.dart';
 
 class ShowDrawing extends ConsumerWidget {
-
-  ShowDrawing({super.key});
+  const ShowDrawing({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -15,9 +14,9 @@ class ShowDrawing extends ConsumerWidget {
     return Stack(
       children: [
         Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
               image: DecorationImage(
-                  image: AssetImage('asset/images/paint_pose.png'))),
+                  image: AssetImage('asset/images/video_capture.jpg'))),
         ),
         RepaintBoundary(
           child: SizedBox(
