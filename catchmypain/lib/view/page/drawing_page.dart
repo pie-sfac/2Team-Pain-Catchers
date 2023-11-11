@@ -92,8 +92,7 @@ class DrawingPage extends ConsumerWidget {
                 SizedBox(
                   width: 8,
                 )
-              ]),   
-              
+              ]),
           Expanded(
             child: Stack(
               children: [
@@ -101,13 +100,13 @@ class DrawingPage extends ConsumerWidget {
                   height: 500,
                   decoration: BoxDecoration(
                       image: DecorationImage(
-                          image: AssetImage('asset/images/paint_pose.png'))),
+                          image: AssetImage('asset/images/video_capture.jpg'))),
                 ),
                 Visibility(
                   maintainState: true,
                   visible: isSketchOn,
                   child: SizedBox(
-                    width:  MediaQuery.of(context).size.width,
+                    width: MediaQuery.of(context).size.width,
                     height: MediaQuery.of(context).size.height,
                     child: DrawingCanvas(
                       width: MediaQuery.of(context).size.width,

@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_ffmpeg/flutter_ffmpeg.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:video_player/video_player.dart';
 
 class VideoPlayerScreen extends StatefulWidget {
@@ -35,6 +37,28 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
     super.dispose();
   }
 
+  Future<String> captureFrame() async {
+    final FlutterFFmpeg ffmpeg = FlutterFFmpeg();
+    final String thumbnailPath =
+        '${(await getTemporaryDirectory()).path}/${DateTime.now().millisecondsSinceEpoch}_capture.jpg';
+
+    // 현재 재생 시간을 밀리초 단위로 가져옵니다.
+    final String currentPosition =
+        ((_controller.value.position.inMilliseconds + 275) / 1000)
+            .toStringAsFixed(3);
+
+    int rc = await ffmpeg.execute(
+        '-i "${widget.videoPath}" -ss $currentPosition -vframes 1 "$thumbnailPath"');
+
+    if (rc == 0) {
+      print("Frame captured: $thumbnailPath");
+      return thumbnailPath;
+    } else {
+      print("Frame capture failed with rc: $rc");
+      return '';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,9 +87,10 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
       ),
       floatingActionButton: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           FloatingActionButton(
+            heroTag: Object(),
             backgroundColor: Colors.transparent,
             onPressed: () {
               // 재생버튼이 눌리면 컨트롤러를 통해 비디오를 재생/일시정지 합니다.
@@ -84,6 +109,20 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
             child: Icon(
               _controller.value.isPlaying ? Icons.pause : Icons.play_arrow,
             ),
+          ),
+          FloatingActionButton(
+            heroTag: Object(),
+            backgroundColor: Colors.transparent,
+            onPressed: () async {
+              String capturedImagePath = await captureFrame();
+              if (capturedImagePath.isNotEmpty) {
+                print('Save Success');
+              }
+            },
+            shape: const CircleBorder(
+              side: BorderSide(color: Colors.white),
+            ),
+            child: const Icon(Icons.camera),
           ),
         ],
       ),

@@ -2,7 +2,7 @@ import 'package:catchmypain/model/exercisedata.dart';
 import 'package:flutter/material.dart';
 import 'package:catchmypain/util/utils.dart' as utils;
 
-class ExerciseListTileSub extends StatelessWidget {
+class ExerciseListTileSub extends StatefulWidget {
   const ExerciseListTileSub({
     Key? key,
     required this.exerciseDataList,
@@ -11,12 +11,35 @@ class ExerciseListTileSub extends StatelessWidget {
 
   final List<ExerciseData> exerciseDataList;
   final ExerciseData exerciseListTileSubData;
+
+  @override
+  State<ExerciseListTileSub> createState() => _ExerciseListTileSubState();
+}
+
+class _ExerciseListTileSubState extends State<ExerciseListTileSub> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(8.0),
       child: Column(
         children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(onPressed: () => {}, child: const Text('테이블')),
+                  Container(
+                    height: 15,
+                    width: 1,
+                    decoration: const BoxDecoration(color: Colors.grey),
+                  ),
+                  TextButton(onPressed: () => {}, child: const Text('차트')),
+                ],
+              ),
+            ],
+          ),
           Table(
             columnWidths: {
               for (var i = 0; i < 11; i++) i: const FractionColumnWidth(1 / 11),
@@ -49,10 +72,10 @@ class ExerciseListTileSub extends StatelessWidget {
           SizedBox(
             height: MediaQuery.of(context).size.height * 0.5,
             child: ListView.builder(
-              itemCount: exerciseDataList.length,
+              itemCount: widget.exerciseDataList.length,
               itemBuilder: (context, i) {
-                if (exerciseDataList[i].recordTime !=
-                    exerciseListTileSubData.recordTime) {
+                if (widget.exerciseDataList[i].recordTime !=
+                    widget.exerciseListTileSubData.recordTime) {
                   return const SizedBox();
                 }
                 return Table(
@@ -63,58 +86,58 @@ class ExerciseListTileSub extends StatelessWidget {
                   children: [
                     TableRow(
                       children: [
-                        Text('${exerciseDataList[i].count}',
+                        Text('${widget.exerciseDataList[i].count}',
                             style: const TextStyle(
                                 color: Colors.black, fontSize: 20)),
-                        Text(exerciseDataList[i].poseState),
-                        Text(exerciseDataList[i].durationTime),
+                        Text(widget.exerciseDataList[i].poseState),
+                        Text(widget.exerciseDataList[i].durationTime),
                         Text(utils
                             .angle(
-                                exerciseDataList[i].ltShoulder,
-                                exerciseDataList[i].ltElbow,
-                                exerciseDataList[i].ltWrist)
+                                widget.exerciseDataList[i].ltShoulder,
+                                widget.exerciseDataList[i].ltElbow,
+                                widget.exerciseDataList[i].ltWrist)
                             .toStringAsFixed(1)),
                         Text(utils
                             .angle(
-                                exerciseDataList[i].rtShoulder,
-                                exerciseDataList[i].rtElbow,
-                                exerciseDataList[i].rtWrist)
+                                widget.exerciseDataList[i].rtShoulder,
+                                widget.exerciseDataList[i].rtElbow,
+                                widget.exerciseDataList[i].rtWrist)
                             .toStringAsFixed(1)),
                         Text(utils
                             .angle(
-                                exerciseDataList[i].ltElbow,
-                                exerciseDataList[i].ltShoulder,
-                                exerciseDataList[i].ltHip)
+                                widget.exerciseDataList[i].ltElbow,
+                                widget.exerciseDataList[i].ltShoulder,
+                                widget.exerciseDataList[i].ltHip)
                             .toStringAsFixed(1)),
                         Text(utils
                             .angle(
-                                exerciseDataList[i].rtElbow,
-                                exerciseDataList[i].rtShoulder,
-                                exerciseDataList[i].rtHip)
+                                widget.exerciseDataList[i].rtElbow,
+                                widget.exerciseDataList[i].rtShoulder,
+                                widget.exerciseDataList[i].rtHip)
                             .toStringAsFixed(1)),
                         Text(utils
                             .angle(
-                                exerciseDataList[i].ltShoulder,
-                                exerciseDataList[i].ltHip,
-                                exerciseDataList[i].ltKnee)
+                                widget.exerciseDataList[i].ltShoulder,
+                                widget.exerciseDataList[i].ltHip,
+                                widget.exerciseDataList[i].ltKnee)
                             .toStringAsFixed(1)),
                         Text(utils
                             .angle(
-                                exerciseDataList[i].rtShoulder,
-                                exerciseDataList[i].rtHip,
-                                exerciseDataList[i].rtKnee)
+                                widget.exerciseDataList[i].rtShoulder,
+                                widget.exerciseDataList[i].rtHip,
+                                widget.exerciseDataList[i].rtKnee)
                             .toStringAsFixed(1)),
                         Text(utils
                             .angle(
-                                exerciseDataList[i].ltHip,
-                                exerciseDataList[i].ltKnee,
-                                exerciseDataList[i].ltAnkle)
+                                widget.exerciseDataList[i].ltHip,
+                                widget.exerciseDataList[i].ltKnee,
+                                widget.exerciseDataList[i].ltAnkle)
                             .toStringAsFixed(1)),
                         Text(utils
                             .angle(
-                                exerciseDataList[i].rtHip,
-                                exerciseDataList[i].rtKnee,
-                                exerciseDataList[i].rtAnkle)
+                                widget.exerciseDataList[i].rtHip,
+                                widget.exerciseDataList[i].rtKnee,
+                                widget.exerciseDataList[i].rtAnkle)
                             .toStringAsFixed(1)),
                       ],
                     ),
@@ -122,7 +145,7 @@ class ExerciseListTileSub extends StatelessWidget {
                 );
               },
             ),
-          )
+          ),
         ],
       ),
     );

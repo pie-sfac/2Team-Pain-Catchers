@@ -30,15 +30,27 @@ class DrawingMainPage extends ConsumerWidget {
                   Padding(
                     padding: const EdgeInsets.all(12.0),
                     child: Image.asset(
-                      'asset/images/paint_pose.png',
+                      'asset/images/video_capture.jpg',
                       width: 70,
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(right: 12.0),
-                    child: Text(
-                      'new!',
-                      style: TextStyle(color: Color.fromRGBO(45, 98, 234, 1)),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.red,
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          'N',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
                     ),
                   ),
                 ]),
