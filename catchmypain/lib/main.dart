@@ -36,7 +36,7 @@ final GoRouter _router = GoRouter(initialLocation: '/', routes: [
   ),
   GoRoute(
     path: '/drawing',
-    builder: (context, state) => DrawingPage(),
+    builder: (context, state) => const DrawingPage(),
   ),
 ]);
 
@@ -46,6 +46,10 @@ class CatchMyPain extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
+      theme: ThemeData(
+        fontFamily: 'Roboto',
+        scaffoldBackgroundColor: const Color(0xFFF4F4F4),
+      ),
       routerConfig: _router,
     );
   }

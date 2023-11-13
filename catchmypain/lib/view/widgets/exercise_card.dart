@@ -15,15 +15,15 @@ class ExerciseCard extends StatelessWidget {
         width: 200,
         height: 200,
         padding: const EdgeInsets.symmetric(horizontal: 10.0),
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
             color: Colors.white,
-            borderRadius: const BorderRadius.all(Radius.circular(20)),
+            borderRadius: BorderRadius.all(Radius.circular(20)),
             boxShadow: [
               BoxShadow(
-                color: Colors.grey.withOpacity(0.5),
+                color: Color(0xFFE7E7E7),
                 spreadRadius: 5,
                 blurRadius: 7,
-                offset: const Offset(0, 3), // changes position of shadow
+                offset: Offset(0, 3), // changes position of shadow
               ),
             ]),
         child: IconButton(

@@ -15,7 +15,7 @@ class SharedReportCardWidget extends StatelessWidget {
           padding: const EdgeInsets.all(8.0),
           child: Container(
             decoration: BoxDecoration(
-              border: Border.all(color: Colors.black, width: 1),
+              border: Border.all(color: const Color(0xFFE7E7E7), width: 1),
               color: Colors.transparent,
               shape: BoxShape.circle,
             ),
