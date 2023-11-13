@@ -14,7 +14,7 @@ class CenterRecommendCardWidget extends StatelessWidget {
     return Container(
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: Colors.grey)),
+            border: Border.all(color: const Color(0xFFCFCFCF))),
         height: MediaQuery.of(context).size.height * 0.6,
         width: MediaQuery.of(context).size.width * 0.5,
         child: Padding(
@@ -24,7 +24,7 @@ class CenterRecommendCardWidget extends StatelessWidget {
               Container(
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.transparent)),
+                      border: Border.all(color: const Color(0xFFE7E7E7))),
                   width: MediaQuery.of(context).size.width * 0.1,
                   height: MediaQuery.of(context).size.height * 0.1,
                   child: Image.asset(imgPath, fit: BoxFit.fill)),

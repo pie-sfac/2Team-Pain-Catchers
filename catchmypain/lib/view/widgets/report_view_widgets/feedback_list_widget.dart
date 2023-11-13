@@ -42,13 +42,12 @@ class _FeedBackListWidgetState extends State<FeedBackListWidget> {
             decoration: BoxDecoration(
               color: const Color.fromRGBO(251, 251, 251, 1),
               borderRadius: BorderRadius.circular(10),
-              boxShadow: [
+              boxShadow: const [
                 BoxShadow(
-                  color: const Color.fromRGBO(128, 128, 128, 1)
-                      .withOpacity(0.5), // Shadow color
+                  color: Color(0xFFE7E7E7), // Shadow color
                   spreadRadius: 1,
                   blurRadius: 5,
-                  offset: const Offset(0, 2), // Changes position of shadow
+                  offset: Offset(0, 2), // Changes position of shadow
                 ),
               ],
             ),
@@ -65,7 +64,7 @@ class _FeedBackListWidgetState extends State<FeedBackListWidget> {
                       isExpanded ? TextOverflow.visible : TextOverflow.ellipsis,
                 ),
                 const Divider(
-                  color: Colors.black,
+                  color: Color(0xFFCFCFCF),
                 ),
                 IconButton(
                   onPressed: () {

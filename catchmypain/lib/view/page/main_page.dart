@@ -117,13 +117,13 @@ class MainPage extends ConsumerWidget {
               ),
               Container(
                 decoration: BoxDecoration(
-                    color: Colors.grey.shade300,
+                    color: const Color(0xFFCFCFCF),
                     borderRadius: BorderRadius.circular(5)),
                 child: const Padding(
                   padding: EdgeInsets.all(4.0),
                   child: Text(
                     '플랜 이용중',
-                    style: TextStyle(color: Colors.blue),
+                    style: TextStyle(color: Color(0xff2D62EA)),
                     textAlign: TextAlign.center,
                   ),
                 ),

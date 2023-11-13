@@ -11,15 +11,15 @@ class ExerciseAbilityCardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
           color: Colors.white,
-          borderRadius: const BorderRadius.all(Radius.circular(10)),
+          borderRadius: BorderRadius.all(Radius.circular(10)),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.5),
+              color: Color(0xFFE7E7E7),
               spreadRadius: 2,
               blurRadius: 2,
-              offset: const Offset(0, 3),
+              offset: Offset(0, 3),
             ),
           ]),
       child: Column(
