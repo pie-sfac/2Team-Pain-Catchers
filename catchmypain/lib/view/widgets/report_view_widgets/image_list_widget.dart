@@ -1,8 +1,13 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:catchmypain/model/mediaRecord_model.dart';
 import 'package:flutter/material.dart';
 
 class ImageListWidget extends StatelessWidget {
-  const ImageListWidget({super.key});
-
+  const ImageListWidget({
+    Key? key,
+    required this.mediaRecordModel,
+  }) : super(key: key);
+  final List<MediaRecordModel> mediaRecordModel;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -29,19 +34,25 @@ class ImageListWidget extends StatelessWidget {
             ],
           ),
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Image.asset('asset/images/Thumbnails.png', width: 110),
-            const SizedBox(width: 10),
-            Image.asset('asset/images/Thumbnails.png', width: 110),
-            const SizedBox(
-                width:
-                    10), // Provide some horizontal spacing between the images
-            Image.asset('asset/images/Thumbnails.png', width: 110),
-          ],
-        )
+        SizedBox(
+          height: 100,
+          width: MediaQuery.of(context).size.width,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Image.network(
+                  mediaRecordModel[index].thumbnailUrl,
+                  width: 100,
+                  height: 100,
+                  fit: BoxFit.cover,
+                ),
+              );
+            },
+            itemCount: mediaRecordModel.length,
+          ),
+        ),
       ],
     );
   }

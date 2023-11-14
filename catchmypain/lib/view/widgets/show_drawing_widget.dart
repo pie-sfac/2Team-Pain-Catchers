@@ -14,7 +14,10 @@ class ShowDrawing extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    List<Sketch> sketches = sketchesFromJson(ref.read(jsonProvider));
+    List<Sketch> sketches = [];
+    if (ref.read(jsonProvider) != "") {
+      sketches = sketchesFromJson(ref.read(jsonProvider));
+    }
 
     return Stack(
       children: [
