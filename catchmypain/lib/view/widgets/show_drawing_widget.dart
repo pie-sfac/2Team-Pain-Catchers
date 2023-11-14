@@ -1,5 +1,5 @@
+import 'dart:convert';
 import 'dart:io';
-
 import 'package:catchmypain/api/getlocaldata.dart';
 import 'package:catchmypain/provider/drawing_provider.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +14,10 @@ class ShowDrawing extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    List<Sketch> savedSketches = ref.read(sketchesProvider);
+    // List<Map<String, dynamic>> tmp =
+    //     List<Map<String, dynamic>>.from(json.decode(ref.read(jsonProvider)));    // fromJson()
+    List<Sketch> sketches = sketchesFromJson(ref.read(jsonProvider));
+
     return Stack(
       children: [
         FutureBuilder(
@@ -56,7 +59,7 @@ class ShowDrawing extends ConsumerWidget {
           child: SizedBox(
             child: CustomPaint(
               painter: SketchPainter(
-                sketches: savedSketches,
+                sketches: sketches,
               ),
             ),
           ),

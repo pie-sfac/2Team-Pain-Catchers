@@ -1,7 +1,8 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'dart:convert';
+import 'package:catchmypain/model/sketch.dart';
 import 'dart:io';
-
 import 'package:catchmypain/api/getlocaldata.dart';
 import 'package:catchmypain/provider/drawing_provider.dart';
 import 'package:catchmypain/view/widgets/drawing_canvas.dart';
@@ -200,7 +201,8 @@ class DrawingPage extends ConsumerWidget {
                           onPressed: () {
                             ref.read(saveProvider.notifier).state =
                                 ref.read(sketchesProvider.notifier).state;
-
+                            ref.read(jsonProvider.notifier).state = sketchesToJson(ref.read(saveProvider)); //json encode
+                            
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                   behavior: SnackBarBehavior.floating,
