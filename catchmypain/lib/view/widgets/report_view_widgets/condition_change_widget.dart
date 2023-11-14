@@ -1,17 +1,22 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:catchmypain/model/condition_model.dart';
 import 'package:catchmypain/view/widgets/report_view_widgets/condition_change_card_widget.dart';
 import 'package:flutter/material.dart';
 
 class ConditionChangeWidget extends StatelessWidget {
-  const ConditionChangeWidget({super.key});
-
+  const ConditionChangeWidget({
+    Key? key,
+    required this.conditionList,
+  }) : super(key: key);
+  final List<ConditionModel> conditionList;
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: MediaQuery.of(context).size.width,
-      child: const Column(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
+          const Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -35,36 +40,31 @@ class ConditionChangeWidget extends StatelessWidget {
               ],
             ),
           ),
-          Padding(
+          const Padding(
             padding: EdgeInsets.symmetric(horizontal: 30),
             child: Text('신주희 회원님의 최근 기분 변화입니다.'),
           ),
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 50),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                ConditionChangeCardWidget(
-                    imgPath: 'asset/images/Emotion_Bad_on.png',
-                    condition: '나쁨',
-                    cndDate: '2023.11.07'),
-                ConditionChangeCardWidget(
-                    imgPath: 'asset/images/Emotion_Good_on.png',
-                    condition: '좋음',
-                    cndDate: '2023.11.06'),
-                ConditionChangeCardWidget(
-                    imgPath: 'asset/images/Emotion_Normal_on.png',
-                    condition: '보통',
-                    cndDate: '2023.11.04'),
-                ConditionChangeCardWidget(
-                    imgPath: 'asset/images/Emotion_Verybad_on.png',
-                    condition: '매우 나쁨',
-                    cndDate: '2023.11.02'),
-                ConditionChangeCardWidget(
-                    imgPath: 'asset/images/Emotion_Verygood_on.png',
-                    condition: '매우 좋음',
-                    cndDate: '2023.11.01'),
-              ],
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 50),
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width,
+                height: 150,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 80),
+                      child: ConditionChangeCardWidget(
+                          imgPath:
+                              'asset/images/Emotion_${conditionList[index].condition}_on.png',
+                          condition: conditionList[index].condition,
+                          cndDate: conditionList[index].date),
+                    );
+                  },
+                  itemCount: conditionList.length,
+                ),
+              ),
             ),
           ),
         ],

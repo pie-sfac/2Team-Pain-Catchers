@@ -1,8 +1,13 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 
 class FeedBackListWidget extends StatefulWidget {
-  const FeedBackListWidget({super.key});
+  const FeedBackListWidget({
+    Key? key,
+    required this.feedBack,
+  }) : super(key: key);
 
+  final String feedBack;
   @override
   State<FeedBackListWidget> createState() => _FeedBackListWidgetState();
 }
@@ -54,7 +59,7 @@ class _FeedBackListWidgetState extends State<FeedBackListWidget> {
             child: Column(
               children: [
                 Text(
-                  '오늘 고생하셨습니다!\n힙힌지 연습과 코어 활성화 운동 연습\n벤치프레스 빈봉 연습 해주세요!\n힙힌지 - 고관절이 경첩처럼 닫히는 느낌으로 연습해주세요. 허리가 말리지 않도록 집중해주세요!\n\n코어 - 배꼽이 스마일(넓어진다는 느낌. 추상적 표현이긴 합니다 ..ㅎㅎ 그리고 배꼽이 바닥을 꾹 눌러준다는 느낌)과 갈비뼈를 아래로 닫아주는 느낌(윗몸일으키기 살짝 하면 갈비가 닫혀요! 그 상태 유지하며 고개만 조심히 내리기)\n\n벤치프레스 - 날개뼈 패킹 풀리지 않도록 유지하며 팔꿈치 벌어지지 않도록 하기 (어깨에 무리가 갑니다) \n\n개인운동 자주 나오실 수 있으실 때 나오시고 언제든 다 물어봐주세요!! 고생하셨습니다',
+                  widget.feedBack,
                   style: const TextStyle(
                     color: Colors.black,
                     fontSize: 14,

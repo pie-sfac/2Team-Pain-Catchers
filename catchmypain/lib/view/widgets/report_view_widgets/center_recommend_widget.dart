@@ -1,9 +1,14 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:catchmypain/model/archiveLink_model.dart';
 import 'package:catchmypain/view/widgets/report_view_widgets/center_recommend_card_widget.dart';
 import 'package:flutter/material.dart';
 
-class CenterRecommendWdiget extends StatelessWidget {
-  const CenterRecommendWdiget({super.key});
-
+class CenterRecommendWidget extends StatelessWidget {
+  const CenterRecommendWidget({
+    Key? key,
+    required this.archiveLinkList,
+  }) : super(key: key);
+  final List<ArchiveLinkModel> archiveLinkList;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -47,25 +52,20 @@ class CenterRecommendWdiget extends StatelessWidget {
                 ),
               ],
             ),
-            child: GridView(
+            child: GridView.builder(
+              itemBuilder: (context, index) {
+                return CenterRecommendCardWidget(
+                  imgPath: 'asset/images/center_recommend_1.png',
+                  recommendTxt: archiveLinkList[index].title,
+                );
+              },
+              itemCount: archiveLinkList.length,
               scrollDirection: Axis.horizontal,
               gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
                   maxCrossAxisExtent: 200,
                   childAspectRatio: 1 / 4,
                   crossAxisSpacing: 20,
                   mainAxisSpacing: 20),
-              children: const [
-                CenterRecommendCardWidget(
-                  imgPath: 'asset/images/center_recommend_1.png',
-                  recommendTxt: '다리 스트레칭 이렇게 하면 간편하게!',
-                ),
-                CenterRecommendCardWidget(
-                    imgPath: 'asset/images/center_recommend_2.png',
-                    recommendTxt: '허리가 안좋다면 회사에서 이런 자세로 스트레칭을 해보세요!'),
-                CenterRecommendCardWidget(
-                    imgPath: 'asset/images/center_recommend_3.png',
-                    recommendTxt: '어깨 운동에 좋은 운동은 이것입니다!'),
-              ],
             ),
           ),
         ],
