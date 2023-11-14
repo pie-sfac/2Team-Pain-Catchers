@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:catchmypain/provider/drawing_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,7 +12,10 @@ class ShowDrawing extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    List<Sketch> savedSketches = ref.read(sketchesProvider);
+    // List<Map<String, dynamic>> tmp =
+    //     List<Map<String, dynamic>>.from(json.decode(ref.read(jsonProvider)));    // fromJson()
+    List<Sketch> sketches = sketchesFromJson(ref.read(jsonProvider));
+
     return Stack(
       children: [
         Container(
@@ -22,7 +27,7 @@ class ShowDrawing extends ConsumerWidget {
           child: SizedBox(
             child: CustomPaint(
               painter: SketchPainter(
-                sketches: savedSketches,
+                sketches: sketches,
               ),
             ),
           ),

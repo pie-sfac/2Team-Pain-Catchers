@@ -22,3 +22,5 @@ final saveProvider = StateProvider<List<Sketch>>((ref) => []);
 final paletteProvider = StateProvider<bool>((ref) => false);
 
 final showProvider = StateProvider<bool>((ref) => true);
+
+final jsonProvider = StateProvider<String>((ref) => "");
