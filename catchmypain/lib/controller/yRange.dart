@@ -68,6 +68,31 @@ class YRange {
     return _reversed_Levels;
   }
 
+  findMinMaxCnt(List<dynamic> stdExerciseDataList, int dataNum) {
+    if (stdExerciseDataList.isEmpty) {
+      return null;
+    }
+
+    _minLevel = stdExerciseDataList[0].count.toDouble();
+    _maxLevel = stdExerciseDataList[0].count.toDouble();
+    for (var entry in stdExerciseDataList.take(dataNum)) {
+      int count = entry.count;
+      if (count < _minLevel) {
+        _minLevel = count.toDouble();
+      }
+      if (count > _maxLevel) {
+        _maxLevel = count.toDouble();
+      }
+    }
+
+    var ranMin = _minLevel;
+    var ranMax = _maxLevel + 1;
+    _levels =
+        generateValuesInRange(ranMin, ranMax, (ranMax - ranMin) / _dividerNum);
+    _reversed_Levels = _levels.reversed.toList();
+    return _reversed_Levels;
+  }
+
   //데이터 중에서 최소값과 최대값 사이의 범위로 리스트 만들기
   //y축 범위
   generateValuesInRange(double minValue, double maxValue, double interval) {

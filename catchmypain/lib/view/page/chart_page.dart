@@ -7,8 +7,8 @@ import 'package:catchmypain/provider/api_provider.dart';
 import 'package:catchmypain/provider/checkbox_lebel.dart';
 import 'package:catchmypain/provider/exercise_record_provider.dart';
 import 'package:catchmypain/provider/page_provider.dart';
-import 'package:catchmypain/provider/read_file_provider.dart';
-import 'package:catchmypain/view/widgets/chart_widget.dart';
+// import 'package:catchmypain/provider/read_file_provider.dart';
+import 'package:catchmypain/view/widgets/chart_data_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
@@ -96,7 +96,7 @@ class _ChartPageState extends ConsumerState<ChartPage> {
     double containerWidth = MediaQuery.of(context).size.width * 0.8;
     double containerHeight = MediaQuery.of(context).size.height * 0.7;
 
-    Widget dataWidget() {
+    Widget ChartWidget() {
       //텍스트의 높이와 아이콘 사이즈를 동일하게 설정
       if (usedData.isNotEmpty) {
         textSpanSize = TextSizeControl().textSize(
@@ -171,6 +171,7 @@ class _ChartPageState extends ConsumerState<ChartPage> {
                                     ? null
                                     : moodsToInt,
                                 dataNum: dataNum,
+                                exerciseCount: true,
                               ),
                               //글자 크기, 라벨 설정
                               Container(
@@ -272,7 +273,8 @@ class _ChartPageState extends ConsumerState<ChartPage> {
                                           child: Text(
                                         chartIndex < 2
                                             ? usedData[index].date
-                                            : usedData[index].durationTime,
+                                            // : usedData[index].durationTime,
+                                            : usedData[index].recordTime,
                                         style: TextStyle(fontSize: fontSize),
                                       ));
                                     }
@@ -293,7 +295,7 @@ class _ChartPageState extends ConsumerState<ChartPage> {
             if (usedData.isNotEmpty) {
               //범례 범위 리스트(역순)
               reversedLevels = YRange().findMinMaxLevels(painHistory);
-              return dataWidget();
+              return ChartWidget();
             }
 
             return const Center(
@@ -304,21 +306,26 @@ class _ChartPageState extends ConsumerState<ChartPage> {
           });
     } else {
       return exerciseDataAsyncValue.when(
-          loading: () => const CircularProgressIndicator(), // 로딩 중 상태 UI
+          loading: () => CircularProgressIndicator(), // 로딩 중 상태 UI
           error: (error, stack) => Text('Error: $error'), // 에러 상태 UI
           data: (exerciseDataList) {
             return stdExerciseDataAsyncValue.when(
-                loading: () => const CircularProgressIndicator(), // 로딩 중 상태 UI
+                loading: () => CircularProgressIndicator(), // 로딩 중 상태 UI
                 error: (error, stack) => Text('Error: $error'), // 에러 상태 UI
                 data: (stdExerciseDataList) {
-                  usedData = exerciseDataList;
+                  // usedData = exerciseDataList;
+                  usedData = stdExerciseDataList;
+                  dataNum =
+                      usedData.length > dataNum ? dataNum : usedData.length;
 
-                  if (usedData.isNotEmpty) {
+                  if (usedData.length != 0) {
                     //범례 범위 리스트(역순)
-                    reversedLevels = YRange().findMinMaxExer(usedData, dataNum);
-                    return dataWidget();
+                    // reversedLevels = YRange().findMinMaxExer(usedData, dataNum);
+                    reversedLevels = YRange().findMinMaxCnt(usedData, dataNum);
+
+                    return ChartWidget();
                   }
-                  return const Center(
+                  return Center(
                     child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [Text('No Data')]),
