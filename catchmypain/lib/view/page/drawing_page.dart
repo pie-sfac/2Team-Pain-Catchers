@@ -97,7 +97,8 @@ class DrawingPage extends ConsumerWidget {
                   width: 8,
                 )
               ]),
-          Expanded(
+          SizedBox(
+            height: 500,
             child: Stack(
               children: [
                 FutureBuilder(
@@ -142,8 +143,8 @@ class DrawingPage extends ConsumerWidget {
                   maintainState: true,
                   visible: isSketchOn,
                   child: SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height,
+                     width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height,
                     child: DrawingCanvas(
                       width: MediaQuery.of(context).size.width,
                       height: MediaQuery.of(context).size.height,
@@ -201,8 +202,10 @@ class DrawingPage extends ConsumerWidget {
                           onPressed: () {
                             ref.read(saveProvider.notifier).state =
                                 ref.read(sketchesProvider.notifier).state;
-                            ref.read(jsonProvider.notifier).state = sketchesToJson(ref.read(saveProvider)); //json encode
-                            
+                            ref.read(jsonProvider.notifier).state =
+                                sketchesToJson(
+                                    ref.read(saveProvider)); //json encode
+
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                   behavior: SnackBarBehavior.floating,

@@ -20,20 +20,20 @@ class ReportPage extends StatelessWidget {
       backgroundColor: Colors.transparent,
       body: ListView(
         children: [
-          HeadTitleWidget(),
-          AdvertisementWidget(),
-          ImageListWidget(),
-          SizedBox(height: 20),
-          FeedBackListWidget(),
-          SizedBox(height: 10),
-          CenterRecommendWdiget(),
+          const HeadTitleWidget(),
+          const AdvertisementWidget(),
+          const ImageListWidget(),
+          const SizedBox(height: 20),
+          const FeedBackListWidget(),
+          const SizedBox(height: 10),
+          const CenterRecommendWdiget(),
           //PainChangeWidget(),
-          SizedBox(height: 10),
-          ExerciseAbilityWidget(),
-          SizedBox(height: 10),
-          ConditionChangeWidget(),
-          SizedBox(height: 10),
-          Row(
+          const SizedBox(height: 10),
+          const ExerciseAbilityWidget(),
+          const SizedBox(height: 10),
+          const ConditionChangeWidget(),
+          const SizedBox(height: 10),
+          const Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 SizedBox(width: 24,),
@@ -52,12 +52,13 @@ class ReportPage extends StatelessWidget {
             ),
           Container(
             height: 500,
+            alignment: Alignment.center,
             child: ShowDrawing(),
             ),
-            SizedBox(height: 20),
-          ShareReportWidget(),
-          SizedBox(height: 20),
-          FooterWidget()
+            const SizedBox(height: 20),
+          const ShareReportWidget(),
+          const SizedBox(height: 20),
+          const FooterWidget()
         ],
       ),
     );

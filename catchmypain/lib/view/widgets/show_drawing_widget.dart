@@ -14,8 +14,6 @@ class ShowDrawing extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // List<Map<String, dynamic>> tmp =
-    //     List<Map<String, dynamic>>.from(json.decode(ref.read(jsonProvider)));    // fromJson()
     List<Sketch> sketches = sketchesFromJson(ref.read(jsonProvider));
 
     return Stack(
@@ -35,8 +33,8 @@ class ShowDrawing extends ConsumerWidget {
                         // 파일이 존재할 경우 이미지를 표시합니다.
                         return Image.file(
                           file,
-                          width: MediaQuery.of(context).size.width * 0.85,
-                          height: MediaQuery.of(context).size.height * 0.75,
+                          width: MediaQuery.of(context).size.width,
+                          height: MediaQuery.of(context).size.height,
                         );
                       } else {
                         // 파일이 존재하지 않을 경우 메시지를 표시합니다.
