@@ -4,7 +4,7 @@ import 'package:catchmypain/model/painHistory_model.dart';
 import 'package:flutter/material.dart';
 import 'package:catchmypain/util/utils.dart' as utils;
 
-class FilledBelowCurvedPainter extends CustomPainter {
+class FilledBelowCurvedPainterAngle extends CustomPainter {
   final List<dynamic> chartData;
   final double levelLenth;
   final List<double>? reversedList;
@@ -20,8 +20,14 @@ class FilledBelowCurvedPainter extends CustomPainter {
   bool filledCheck;
   bool lineCheck;
 
-  FilledBelowCurvedPainter(this.chartData, this.levelLenth, this.reversedList,
-      this.iconSize, this.dataNum, this.filledCheck, this.lineCheck);
+  FilledBelowCurvedPainterAngle(
+      this.chartData,
+      this.levelLenth,
+      this.reversedList,
+      this.iconSize,
+      this.dataNum,
+      this.filledCheck,
+      this.lineCheck);
 
   //level 반환 : painHistory data
   //condition 반환 : condition data
@@ -57,11 +63,10 @@ class FilledBelowCurvedPainter extends CustomPainter {
         var interHeight = (reversedList![0] - reversedList![1]);
         var level = chartData[0] is PainHistoryModel
             ? chartData[0].level.toDouble()
-            // : double.parse(utils
-            //     .angle(chartData[0].ltShoulder, chartData[0].ltElbow,
-            //         chartData[0].ltWrist)
-            //     .toStringAsFixed(1));
-            : chartData[0].count.toDouble(); //count
+            : double.parse(utils
+                .angle(chartData[0].ltShoulder, chartData[0].ltElbow,
+                    chartData[0].ltWrist)
+                .toStringAsFixed(1));
         if (chartData.length > 1) {
           double startX = (size.width / chartData.take(dataNum).length) * 0 +
               (size.width / chartData.take(dataNum).length) / 2;
@@ -82,16 +87,15 @@ class FilledBelowCurvedPainter extends CustomPainter {
             double endY = size.height -
                 size.height /
                     (reversedList!.first - (reversedList!.last - interHeight)) *
-                    ((chartData[0] is PainHistoryModel
-                            ? chartData[i + 1].level.toDouble()
-                            // : double.parse(utils
-                            //         .angle(
-                            //             chartData[i + 1].ltShoulder,
-                            //             chartData[i + 1].ltElbow,
-                            //             chartData[i + 1].ltWrist)
-                            //         .toStringAsFixed(1)) -
-                            : chartData[i + 1].count.toDouble()) - //count
-                        (reversedList!.last - interHeight)) +
+                    (chartData[0] is PainHistoryModel
+                        ? chartData[i + 1].level.toDouble()
+                        : double.parse(utils
+                                .angle(
+                                    chartData[i + 1].ltShoulder,
+                                    chartData[i + 1].ltElbow,
+                                    chartData[i + 1].ltWrist)
+                                .toStringAsFixed(1)) -
+                            (reversedList!.last - interHeight)) +
                 iconSize / 2;
 
             if (lineCheck) {

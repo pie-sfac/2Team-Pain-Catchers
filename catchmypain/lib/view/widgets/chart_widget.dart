@@ -1,177 +1,124 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:catchmypain/controller/changed_font_icon_size.dart';
-import 'package:catchmypain/controller/filled_below_curvedLine_draw.dart';
-import 'package:catchmypain/model/condition_model.dart';
-import 'package:catchmypain/model/exercisedata.dart';
-import 'package:catchmypain/model/painHistory_model.dart';
+import 'package:catchmypain/controller/yRange.dart';
+import 'package:catchmypain/view/widgets/chart_data_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:catchmypain/util/utils.dart' as utils;
 
-// ignore: must_be_immutable
-class Chart extends StatelessWidget {
-  Chart(
-      {Key? key,
-      required this.fontSize,
-      required this.iconSize,
-      required this.usedData,
-      required this.containerWidth,
-      required this.containerHeight,
-      required this.labelCheck,
-      required this.filledCheck,
-      required this.lineCheck,
-      required this.yLength,
-      this.reversedList,
-      this.moodsToInt,
-      this.dataNum})
-      : super(key: key);
-  final double fontSize;
-  final double iconSize; //y축 아이콘의 사이즈와 차트위에 아이콘의 사이즈 동일하게 하기
-  //가져온 데이터
+class ChartWidget extends StatelessWidget {
   final List<dynamic> usedData;
-  final double containerWidth;
-  final double containerHeight;
-  final bool labelCheck; //checkboxState.labelCheck
-  final bool filledCheck;
-  final bool lineCheck;
-  final double yLength; //moods.length
-  final List<double>? reversedList;
-  Map<String, dynamic>? moodsToInt;
-  int? dataNum;
+
+  const ChartWidget({
+    Key? key,
+    required this.usedData,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    var chartData;
-    // print('1 textSpanSize : ${textSpanSize}');
-    // print(fontSize);
-    // print(iconSize);
-    // print(usedData);
-    // print(containerWidth);
-    // print(containerHeight);
-    // print(labelCheck);
-    // print(yLength);
-    // print(usedData.runtimeType);
+    double fontSize = 10;
+    double iconSize = 0;
+    double sizedBoxWidth = 0;
+    int dataNum = usedData.length;
+    List<double> reversedLevels = YRange().findMinMaxExer(usedData, dataNum);
+    double containerWidth = MediaQuery.of(context).size.width * 0.8;
+    double containerHeight = MediaQuery.of(context).size.height * 0.5;
 
-    return Stack(
+    //텍스트의 높이와 아이콘 사이즈를 동일하게 설정
+    if (usedData.isNotEmpty) {
+      Size textSpanSize = TextSizeControl().textSize(
+          reversedLevels[0].toString(), TextStyle(fontSize: fontSize));
+      iconSize = textSpanSize.height;
+      //y축 범례 너비 설정
+      sizedBoxWidth = textSpanSize.width + 5;
+    }
+
+    return Column(
       children: [
-        Container(
-          width: containerWidth,
-          height: containerHeight,
-          color: Colors.black12,
-        ),
-        CustomPaint(
-          size: Size(containerWidth, containerHeight),
-          painter: FilledBelowCurvedPainter(usedData, yLength, reversedList,
-              iconSize, dataNum!, filledCheck, lineCheck),
-        ),
-        //... : 스프레드 연산자. 컬렉션의 항목들을 개별 항목으로 확장하고, 주로 리스트나 다른 컬렉션 내에 다른 컬렉션의 항목들을 포함시킬 때 사용
-        ...usedData
-            .asMap()
-            .entries
-            .where((item) => item.key < dataNum!)
-            .map((item) {
-          if (item.value is PainHistoryModel) {
-            chartData = item.value.level;
-          } else if (item.value is ConditionModel) {
-            chartData = item.value.condition;
-          } else if (item.value is ExerciseData) {
-            chartData = double.parse(utils
-                .angle(item.value.ltShoulder, item.value.ltElbow,
-                    item.value.ltWrist)
-                .toStringAsFixed(1));
-          }
-
-          //item.value.runtimeType : _$36PainHistoryModelImpl
-          //_$36PainHistoryModelImpl 타입은 PainHistoryModel 타입과 정확히 같지 않습니다
-          //PainHistoryModel 인터페이스를 구현하지만, 실제로는 다른 타입
-          //따라서 is 키워드를 사용하여 객체가 특정 타입의 인스턴스인지를 확인
-          double level = item.value is ConditionModel
-              ? moodsToInt![chartData].toDouble()
-              : chartData.toDouble();
-          double topPosition = 0;
-          double leftPosition = 0;
-          Size textSpanSize = TextSizeControl().textSize(
-              item.value is ConditionModel ? chartData : chartData.toString(),
-              TextStyle(fontSize: fontSize));
-
-          //범례가 아이콘일 때
-          if (item.value is ConditionModel) {
-            if (labelCheck == true) {
-              topPosition = containerHeight -
-                  (level * (containerHeight / yLength)) +
-                  (containerHeight / yLength) / 2 -
-                  iconSize / 2 -
-                  textSpanSize.height;
-              leftPosition = (containerWidth / usedData.length) *
-                      item.key + //item.key : index
-                  (containerWidth / usedData.length) / 2 -
-                  textSpanSize.width / 2;
-            } else {
-              topPosition = containerHeight -
-                  (level * (containerHeight / yLength)) +
-                  (containerHeight / yLength) / 2 -
-                  iconSize / 2;
-              leftPosition = (containerWidth / usedData.length) *
-                      item.key + //item.key : index
-                  (containerWidth / usedData.length) / 2 -
-                  iconSize / 2; //아이콘의 중심을 해당 위치로 옮기기위해
-            }
-          }
-          //범례가 텍스트일 때
-          else {
-            var interHeight = (reversedList![0] - reversedList![1]);
-            if (labelCheck == true) {
-              topPosition = containerHeight -
-                  containerHeight /
-                      (reversedList!.first -
-                          (reversedList!.last - interHeight)) *
-                      (level - (reversedList!.last - interHeight)) -
-                  // (level * (containerHeight / yLength)) -
-                  textSpanSize.height;
-              leftPosition = (containerWidth / usedData.take(dataNum!).length) *
-                      item.key + //item.key : index
-                  (containerWidth / usedData.take(dataNum!).length) / 2 -
-                  (textSpanSize.width > iconSize
-                      ? textSpanSize.width / 2
-                      : iconSize / 2);
-            } else {
-              topPosition = containerHeight -
-                  containerHeight /
-                      (reversedList!.first -
-                          (reversedList!.last - interHeight)) *
-                      (level - (reversedList!.last - interHeight));
-              leftPosition = (containerWidth / usedData.take(dataNum!).length) *
-                      item.key + //item.key : index
-                  (containerWidth / usedData.take(dataNum!).length) / 2 -
-                  iconSize / 2;
-            }
-          }
-
-          // print(iconSize);
-          return Positioned(
-            left: leftPosition,
-            top: topPosition,
-            child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  labelCheck == true
-                      ? Text(
-                          item.value is ConditionModel
-                              ? chartData
-                              : chartData.toString(),
-                          style: TextStyle(fontSize: fontSize),
-                        )
-                      : const SizedBox(),
-                  Icon(
-                    Icons.circle,
-                    color: Colors.amber,
-                    size: iconSize,
-                  )
-                ]),
-          );
-        }).toList(),
+        Row(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildYAxis(
+                  reversedLevels, sizedBoxWidth, containerHeight, fontSize),
+              const SizedBox(
+                width: 8,
+              ),
+              // _buildChart(),
+              Chart(
+                fontSize: fontSize,
+                iconSize: iconSize,
+                usedData: usedData,
+                containerWidth: containerWidth,
+                containerHeight: containerHeight,
+                labelCheck: true,
+                filledCheck: true,
+                lineCheck: true,
+                yLength: reversedLevels.length.toDouble(),
+                reversedList: reversedLevels,
+                // moodsToInt: null,
+                dataNum: dataNum,
+                exerciseCount: false,
+              ),
+            ]),
+        Padding(
+            padding: EdgeInsets.only(left: sizedBoxWidth, top: 8),
+            child: _buildXAxis(containerWidth, dataNum, fontSize)),
       ],
     );
+  }
+
+  Widget _buildYAxis(List<double> reversedLevels, double sizedBoxWidth,
+      double containerHeight, double fontSize) {
+    // Y축 UI 구현
+    return SizedBox(
+      width: sizedBoxWidth,
+      height: containerHeight,
+      child: ListView.builder(
+        itemExtent: containerHeight / reversedLevels.length,
+        itemCount: reversedLevels.length,
+        itemBuilder: (context, index) {
+          return Text(
+            reversedLevels[index].toString(),
+            style: TextStyle(fontSize: fontSize),
+          );
+        },
+      ),
+    );
+  }
+
+  // Widget _buildChart() {
+  //   // 그래프 UI 구현
+  //   return Container(
+  //     width: containerWidth,
+  //     height: containerHeight,
+  //     // 그래프 위젯 구현
+  //     // 예: CustomPaint 또는 Stack
+  //   );
+  // }
+
+  Widget _buildXAxis(double containerWidth, int dataNum, double fontSize) {
+    // X축 UI 구현
+    return SizedBox(
+        height: 45,
+        width: containerWidth,
+        child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          itemExtent: (containerWidth) / (dataNum),
+          itemCount: dataNum,
+          itemBuilder: (context, index) {
+            {
+              if (index % 40 == 0) {
+                return OverflowBox(
+                  minWidth: 0.0,
+                  maxWidth: double.infinity,
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    usedData[index].durationTime,
+                    style: TextStyle(fontSize: fontSize),
+                  ),
+                );
+              }
+              return SizedBox();
+            }
+          },
+        ));
   }
 }

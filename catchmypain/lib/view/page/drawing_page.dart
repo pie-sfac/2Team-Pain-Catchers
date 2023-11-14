@@ -1,8 +1,9 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'dart:convert';
-
 import 'package:catchmypain/model/sketch.dart';
+import 'dart:io';
+import 'package:catchmypain/api/getlocaldata.dart';
 import 'package:catchmypain/provider/drawing_provider.dart';
 import 'package:catchmypain/view/widgets/drawing_canvas.dart';
 import 'package:catchmypain/view/widgets/drawing_menu.dart';
@@ -99,11 +100,43 @@ class DrawingPage extends ConsumerWidget {
           Expanded(
             child: Stack(
               children: [
-                Container(
-                  height: 500,
-                  decoration: BoxDecoration(
-                      image: DecorationImage(
-                          image: AssetImage('asset/images/video_capture.jpg'))),
+                FutureBuilder(
+                  future: GetLocalData.getPoseImgFilePath(),
+                  builder:
+                      (BuildContext context, AsyncSnapshot<String> snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      if (snapshot.hasData) {
+                        final file = File(snapshot.data!);
+                        return FutureBuilder<bool>(
+                          future: file.exists(),
+                          builder: (BuildContext context,
+                              AsyncSnapshot<bool> fileSnapshot) {
+                            if (fileSnapshot.connectionState ==
+                                ConnectionState.done) {
+                              if (fileSnapshot.hasData &&
+                                  fileSnapshot.data == true) {
+                                // 파일이 존재할 경우 이미지를 표시합니다.
+                                return Image.file(
+                                  file,
+                                  width: MediaQuery.of(context).size.width,
+                                  height: MediaQuery.of(context).size.height,
+                                );
+                              } else {
+                                // 파일이 존재하지 않을 경우 메시지를 표시합니다.
+                                return const Text('파일을 찾을 수 없습니다.');
+                              }
+                            }
+                            // 파일 존재 여부 확인 중
+                            return const CircularProgressIndicator();
+                          },
+                        );
+                      } else if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
+                      }
+                    }
+                    // 경로 가져오는 중
+                    return const CircularProgressIndicator();
+                  },
                 ),
                 Visibility(
                   maintainState: true,
