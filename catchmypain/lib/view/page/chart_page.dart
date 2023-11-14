@@ -292,6 +292,9 @@ class _ChartPageState extends ConsumerState<ChartPage> {
             condition = report.condition;
             painHistory = report.painHistory;
             usedData = chartIndex == 0 ? painHistory : condition;
+            print('memberName : ${memberName}');
+            print('usedData : ${usedData}');
+
             if (usedData.isNotEmpty) {
               //범례 범위 리스트(역순)
               reversedLevels = YRange().findMinMaxLevels(painHistory);

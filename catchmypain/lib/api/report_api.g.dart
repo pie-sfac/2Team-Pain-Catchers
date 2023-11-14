@@ -43,14 +43,17 @@ class _ReportApi implements ReportApi {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    print(
-        'result : member: ${_result.data!['member']},painHistory: ${_result.data!['painHistory']['items'].runtimeType},condition: ${_result.data!['condition']['items'].runtimeType}');
-    //필요한 속성만 사용
-    //.fromJson의 인자를 해당 매개변수 데이터타입 Map<String, dynamic>로 맞춰줘야함
     final value = ApiResponse.fromJson({
+      'uuid': _result.data!['uuid'],
+      'writer': _result.data!['writer'],
+      'center': _result.data!['center'],
       'member': _result.data!['member'],
+      'comment': _result.data!['comment'],
+      'media': _result.data!['media']['items'],
+      'archiveLink': _result.data!['archiveLink']['items'],
       'painHistory': _result.data!['painHistory']['items'],
-      'condition': _result.data!['condition']['items']
+      'condition': _result.data!['condition']['items'],
+      'exercise': _result.data!['exercise']['items']
     });
     print('value : ${value}');
     return value;
