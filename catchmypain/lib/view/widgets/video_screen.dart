@@ -38,10 +38,16 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
   }
 
   Future<String> captureFrame() async {
-    final FlutterFFmpeg ffmpeg = FlutterFFmpeg();
+    FlutterFFmpeg ffmpeg = FlutterFFmpeg();
+    var directory = await getApplicationDocumentsDirectory();
+    var poseImgDirectory = Directory('${directory.path}/poseImg');
+    if (!await poseImgDirectory.exists()) {
+      await poseImgDirectory.create(recursive: true);
+    }
+    // 파일 이름을 지정하고 경로를 생성합니다.
     final String thumbnailPath =
-        '${(await getTemporaryDirectory()).path}/${DateTime.now().millisecondsSinceEpoch}_capture.jpg';
-
+        //'${(await getTemporaryDirectory()).path}/${DateTime.now().millisecondsSinceEpoch}_capture.jpg';
+        '${poseImgDirectory.path}/pose_screenshot.png';
     // 현재 재생 시간을 밀리초 단위로 가져옵니다.
     final String currentPosition =
         ((_controller.value.position.inMilliseconds + 275) / 1000)

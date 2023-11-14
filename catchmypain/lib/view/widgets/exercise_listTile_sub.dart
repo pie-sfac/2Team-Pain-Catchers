@@ -1,7 +1,11 @@
+import 'dart:io';
+
 import 'package:catchmypain/model/exercisedata.dart';
 import 'package:catchmypain/view/widgets/chart_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:catchmypain/util/utils.dart' as utils;
+import 'package:path_provider/path_provider.dart';
+import 'package:screenshot/screenshot.dart';
 
 class ExerciseListTileSub extends StatefulWidget {
   const ExerciseListTileSub({
@@ -19,7 +23,7 @@ class ExerciseListTileSub extends StatefulWidget {
 
 class _ExerciseListTileSubState extends State<ExerciseListTileSub> {
   bool onPressCheck = true;
-
+  ScreenshotController screenshotController = ScreenshotController();
   Widget dataTable() {
     return Column(
       children: [
@@ -138,7 +142,7 @@ class _ExerciseListTileSubState extends State<ExerciseListTileSub> {
     int? startIndex;
     int? endIndex;
 
-    for (int i = 0; i <= widget.exerciseDataList.length; i++) {
+    for (int i = 0; i < widget.exerciseDataList.length; i++) {
       if (widget.exerciseDataList[i].recordTime ==
           widget.exerciseListTileSubData.recordTime) {
         startIndex ??= i;
@@ -147,8 +151,45 @@ class _ExerciseListTileSubState extends State<ExerciseListTileSub> {
       }
       if (startIndex != null) break;
     }
-    return ChartWidget(
-        usedData: widget.exerciseDataList.sublist(startIndex!, endIndex! + 1));
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        Screenshot(
+          controller: screenshotController,
+          child: ChartWidget(
+            usedData:
+                widget.exerciseDataList.sublist(startIndex!, endIndex! + 1),
+          ),
+        ),
+        ElevatedButton(
+          child: const Text('내보내기'),
+          onPressed: () async {
+            final imageFile = await screenshotController.capture();
+            // 여기서 imageFile을 로컬에 저장하거나 원하는 방식으로 처리할 수 있습니다.
+            if (imageFile != null) {
+              final directory = await getApplicationDocumentsDirectory();
+
+              // 앱의 문서 디렉터리 경로를 가져옵니다.
+              final chartDirectory = Directory('${directory.path}/chart');
+              if (!await chartDirectory.exists()) {
+                await chartDirectory.create(recursive: true);
+              }
+              // 파일 이름을 지정하고 경로를 생성합니다.
+              final filePath = '${chartDirectory.path}/screenshot.png';
+              // 파일을 저장합니다.
+              final File file = File(filePath);
+              // Uint8List 데이터를 파일로 씁니다.
+              await file.writeAsBytes(imageFile);
+              // 파일이 저장되었음을 알리는 메시지를 표시합니다.
+              print('스크린샷이 저장되었습니다: $filePath');
+            } else {
+              // 이미지 파일이 캡처되지 않았을 때 처리할 코드를 여기에 추가할 수 있습니다.
+              print('스크린샷을 캡처할 수 없습니다.');
+            }
+          },
+        ),
+      ],
+    );
   }
 
   @override
