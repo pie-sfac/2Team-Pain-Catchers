@@ -163,7 +163,7 @@ class Chart extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  if (usedData.length < 40 || item.key % 40 == 0) ...[
+                  if (usedData.length < 40 || item.key % 6 == 0) ...[
                     if (labelCheck) ...[
                       Text(
                         item.value is ConditionModel

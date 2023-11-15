@@ -19,9 +19,9 @@ class MainPage extends ConsumerWidget {
       initialPage: menuIndex,
     );
     const List<BottomNavigationBarItem> navItems = [
-      BottomNavigationBarItem(icon: Icon(Icons.draw_outlined), label: '자세 교정'),
       BottomNavigationBarItem(
           icon: Icon(Icons.camera_alt_outlined), label: '운동평가'),
+      BottomNavigationBarItem(icon: Icon(Icons.draw_outlined), label: '자세 교정'),
       BottomNavigationBarItem(
           icon: Icon(Icons.add_chart_outlined), label: '차트'),
       BottomNavigationBarItem(
@@ -58,13 +58,13 @@ class MainPage extends ConsumerWidget {
                       ref.read(chartIndexProvider.notifier).value = 2;
                     },
                     child: const Text(
-                      'exercise',
+                      'Exercise History',
                       style: TextStyle(color: Colors.black),
                     ),
                   ),
                 ],
               )
-            : menuIndex == 1
+            : menuIndex == 0
                 ? Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
@@ -151,8 +151,8 @@ class MainPage extends ConsumerWidget {
           controller: pageController,
           onPageChanged: (i) => ref.read(indexProvider.notifier).value = i,
           children: const [
-            DrawingMainPage(),
             ExerciseCameraPage(),
+            DrawingMainPage(),
             ChartPage(),
             ReportPage(),
           ]),

@@ -44,10 +44,10 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
     if (!await poseImgDirectory.exists()) {
       await poseImgDirectory.create(recursive: true);
     }
-    // 파일 이름을 지정하고 경로를 생성합니다.
-    final String thumbnailPath =
-        //'${(await getTemporaryDirectory()).path}/${DateTime.now().millisecondsSinceEpoch}_capture.jpg';
-        '${poseImgDirectory.path}/pose_screenshot.png';
+
+    // 고정된 파일 이름을 사용합니다.
+    final String thumbnailPath = '${poseImgDirectory.path}/pose_screenshot.png';
+
     // 현재 재생 시간을 밀리초 단위로 가져옵니다.
     final String currentPosition =
         ((_controller.value.position.inMilliseconds + 275) / 1000)
@@ -69,7 +69,12 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Video Player'),
+        iconTheme: const IconThemeData(
+          color: Colors.black, //change your color here
+        ),
+        //title: const Text('Video Player'),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
       ),
       body: FutureBuilder(
         future: _initializeVideoPlayerFuture,
@@ -122,6 +127,17 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
             onPressed: () async {
               String capturedImagePath = await captureFrame();
               if (capturedImagePath.isNotEmpty) {
+                if (mounted) {
+                  // 위젯이 마운트 상태인지 확인합니다.
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                        behavior: SnackBarBehavior.floating,
+                        margin: const EdgeInsets.only(bottom: 12),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4)),
+                        content: const Text('캡처를 완료하였습니다.')),
+                  );
+                }
                 print('Save Success');
               }
             },

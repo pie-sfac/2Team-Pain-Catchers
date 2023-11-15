@@ -105,7 +105,7 @@ class ChartWidget extends StatelessWidget {
           itemCount: dataNum,
           itemBuilder: (context, index) {
             {
-              if (index % 40 == 0) {
+              if (index % 6 == 0) {
                 return OverflowBox(
                   minWidth: 0.0,
                   maxWidth: double.infinity,
@@ -116,7 +116,7 @@ class ChartWidget extends StatelessWidget {
                   ),
                 );
               }
-              return SizedBox();
+              return const SizedBox();
             }
           },
         ));
