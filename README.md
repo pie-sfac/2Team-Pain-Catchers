@@ -11,6 +11,9 @@
 신주희 : 사진위에 필기<br>
 최상현 : 카메라<br>
 
+### 노션
+https://www.notion.so/sniperfactory1/Pain-Catchers-3d1946a2f855414f96d8b32b8ee4ce28
+<br><br>
 
 ## 기술스택 및 개발환경
 ### Flutter
