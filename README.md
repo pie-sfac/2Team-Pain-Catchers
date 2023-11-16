@@ -40,6 +40,7 @@ https://www.notion.so/sniperfactory1/Pain-Catchers-3d1946a2f855414f96d8b32b8ee4c
 <img src="https://github.com/pie-sfac/2Team-Pain-Catchers/assets/115637631/810d3903-4f39-45b1-85e5-6b96a90e5a62" width="30%" height="30%">
 
 ### draw
+<img src="https://github.com/pie-sfac/2Team-Pain-Catchers/assets/115637631/06a788f2-7577-45cb-ba84-7b8751939884" width="30%" height="30%">
 <img src="https://github.com/pie-sfac/2Team-Pain-Catchers/assets/115637631/653cb61b-151f-42a2-ad16-b9cb49857448" width="30%" height="30%">
 <img src="https://github.com/pie-sfac/2Team-Pain-Catchers/assets/115637631/046d107a-4603-496c-8130-8146833f9544" width="30%" height="30%">
 
